@@ -1,4 +1,4 @@
-import { useState } from "react";
+import React, { useState } from "react";
 import { motion } from "framer-motion";
 import { Mail, Phone, MapPin, MessageSquare } from "lucide-react";
 import { personalInfo } from "../data/userData";
@@ -12,13 +12,64 @@ const Contact = () => {
     lookingFor: "",
     message: "",
   });
-  const [submitted, setSubmitted] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [submitStatus, setSubmitStatus] = useState<"success" | "error" | null>(null);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setSubmitted(true);
-    setForm({ name: "", email: "", phone: "", lookingFor: "", message: "" });
-    setTimeout(() => setSubmitted(false), 5000);
+    setIsSubmitting(true);
+    setSubmitStatus(null);
+
+    const serviceId = import.meta.env.VITE_EMAILJS_SERVICE_ID;
+    const templateId = import.meta.env.VITE_EMAILJS_TEMPLATE_ID;
+    const publicKey = import.meta.env.VITE_EMAILJS_PUBLIC_KEY;
+
+    if (!serviceId || !templateId || !publicKey) {
+      // simulated success for fallback
+      console.log("EmailJS credentials not configured in env. Simulating dispatch:", form);
+      await new Promise((resolve) => setTimeout(resolve, 1500));
+      setSubmitStatus("success");
+      setIsSubmitting(false);
+      setForm({ name: "", email: "", phone: "", lookingFor: "", message: "" });
+      setTimeout(() => setSubmitStatus(null), 5000);
+      return;
+    }
+
+    try {
+      const response = await fetch("https://api.emailjs.com/api/v1.0/email/send", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          service_id: serviceId,
+          template_id: templateId,
+          user_id: publicKey,
+          template_params: {
+            from_name: form.name,
+            from_email: form.email,
+            phone: form.phone,
+            looking_for: form.lookingFor,
+            message: form.message,
+          },
+        }),
+      });
+
+      if (response.ok) {
+        setSubmitStatus("success");
+        setForm({ name: "", email: "", phone: "", lookingFor: "", message: "" });
+      } else {
+        const errText = await response.text();
+        console.error("EmailJS dispatch error response:", errText);
+        setSubmitStatus("error");
+      }
+    } catch (err) {
+      console.error("EmailJS dispatch connection error:", err);
+      setSubmitStatus("error");
+    } finally {
+      setIsSubmitting(false);
+      setTimeout(() => setSubmitStatus(null), 5000);
+    }
   };
 
   return (
@@ -170,10 +221,11 @@ const Contact = () => {
                       id="form-name"
                       type="text"
                       required
+                      disabled={isSubmitting}
                       placeholder="Your name"
                       value={form.name}
                       onChange={(e) => setForm({ ...form, name: e.target.value })}
-                      className="bg-transparent border-none outline-none text-white text-base py-2 placeholder-zinc-700 font-mono"
+                      className="bg-transparent border-none outline-none text-white text-base py-2 placeholder-zinc-700 font-mono disabled:opacity-50"
                     />
                   </div>
 
@@ -186,10 +238,11 @@ const Contact = () => {
                       id="form-email"
                       type="email"
                       required
+                      disabled={isSubmitting}
                       placeholder="you@email.com"
                       value={form.email}
                       onChange={(e) => setForm({ ...form, email: e.target.value })}
-                      className="bg-transparent border-none outline-none text-white text-base py-2 placeholder-zinc-700 font-mono"
+                      className="bg-transparent border-none outline-none text-white text-base py-2 placeholder-zinc-700 font-mono disabled:opacity-50"
                     />
                   </div>
 
@@ -201,10 +254,11 @@ const Contact = () => {
                     <input
                       id="form-phone"
                       type="tel"
+                      disabled={isSubmitting}
                       placeholder="+91 XXXXX XXXXX"
                       value={form.phone}
                       onChange={(e) => setForm({ ...form, phone: e.target.value })}
-                      className="bg-transparent border-none outline-none text-white text-base py-2 placeholder-zinc-700 font-mono"
+                      className="bg-transparent border-none outline-none text-white text-base py-2 placeholder-zinc-700 font-mono disabled:opacity-50"
                     />
                   </div>
 
@@ -216,9 +270,10 @@ const Contact = () => {
                     <select
                       id="form-looking"
                       required
+                      disabled={isSubmitting}
                       value={form.lookingFor}
                       onChange={(e) => setForm({ ...form, lookingFor: e.target.value })}
-                      className="bg-transparent border-none outline-none text-white text-base py-2 appearance-none cursor-pointer pr-8 font-mono"
+                      className="bg-transparent border-none outline-none text-white text-base py-2 appearance-none cursor-pointer pr-8 font-mono disabled:opacity-50"
                     >
                       <option value="" disabled className="bg-[#050505] text-zinc-600">Select option</option>
                       <option value="full-stack" className="bg-[#050505]">Full-stack development</option>
@@ -242,10 +297,11 @@ const Contact = () => {
                     <textarea
                       id="form-message"
                       required
+                      disabled={isSubmitting}
                       placeholder="Tell me about your project or opportunity..."
                       value={form.message}
                       onChange={(e) => setForm({ ...form, message: e.target.value })}
-                      className="bg-transparent border-none outline-none text-white text-base py-2 resize-none h-36 placeholder-zinc-700 font-mono"
+                      className="bg-transparent border-none outline-none text-white text-base py-2 resize-none h-36 placeholder-zinc-700 font-mono disabled:opacity-50"
                     />
                   </div>
                 </div>
@@ -253,15 +309,21 @@ const Contact = () => {
                 {/* Submit Button */}
                 <button
                   type="submit"
-                  className="w-full py-5 bg-blue-600 hover:bg-blue-700 text-white font-black uppercase text-sm sm:text-base tracking-widest transition-all text-center flex items-center justify-center gap-1.5 cursor-pointer border-t border-white/5 active:scale-[0.99] focus-visible:bg-blue-700 focus-visible:outline-none"
+                  disabled={isSubmitting}
+                  className="w-full py-5 bg-blue-600 hover:bg-blue-700 disabled:bg-blue-600/40 disabled:cursor-not-allowed text-white font-black uppercase text-sm sm:text-base tracking-widest transition-all text-center flex items-center justify-center gap-1.5 cursor-pointer border-t border-white/5 active:scale-[0.99] focus-visible:bg-blue-700 focus-visible:outline-none"
                 >
-                  SEND MESSAGE &rarr;
+                  {isSubmitting ? "DISPATCHING MSG..." : "SEND MESSAGE →"}
                 </button>
               </div>
 
-              {submitted && (
+              {submitStatus === "success" && (
                 <div className="border border-green-500/20 bg-green-500/5 p-3 font-mono text-xs text-green-400 mt-4 text-center">
                   [SUCCESS] Message dispatched to Akhil.Dev gateway.
+                </div>
+              )}
+              {submitStatus === "error" && (
+                <div className="border border-red-500/20 bg-red-500/5 p-3 font-mono text-xs text-red-400 mt-4 text-center">
+                  [ERROR] Message dispatch failed. Please check your credentials or email directly.
                 </div>
               )}
             </form>

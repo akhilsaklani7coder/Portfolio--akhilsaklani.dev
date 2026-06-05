@@ -43,9 +43,11 @@ export const TextSwitcher = ({
           setDisplayText(fullText.substring(0, displayText.length - 1));
         }, deletingSpeed);
       } else {
-        // Word is fully deleted, transition to the next text in the list
-        setIsDeleting(false);
-        setCurrentTextIndex((prev) => (prev + 1) % texts.length);
+        // Word is fully deleted, transition to the next text in the list after a brief pause
+        timer = setTimeout(() => {
+          setIsDeleting(false);
+          setCurrentTextIndex((prev) => (prev + 1) % texts.length);
+        }, 100);
       }
     }
 

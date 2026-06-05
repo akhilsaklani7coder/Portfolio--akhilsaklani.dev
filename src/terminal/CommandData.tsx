@@ -174,6 +174,8 @@ export const getCommandData = (setTerminalMode: (v: boolean) => void): Record<st
         <li>projects</li>
         <li>skills</li>
         <li>contact</li>
+        <li>game (interactive coding trivia game)</li>
+        <li>chat (AI assistant direct CLI chat session)</li>
         <li>glow on/off</li>
         <li>settings ui landing/modular</li>
         <li className="text-blue-500 cursor-pointer hover:underline" onClick={() => setTerminalMode(false)}>gui</li>

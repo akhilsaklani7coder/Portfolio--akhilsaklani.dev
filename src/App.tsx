@@ -125,7 +125,7 @@ const App = () => {
           setUiType={handleUiToggle}
         />
       )}
-      {!terminalMode && <AiAssistant />}
+      {!terminalMode && <AiAssistant activeTab={uiType === "landing" ? undefined : activeTab} />}
     </div>
   );
 };

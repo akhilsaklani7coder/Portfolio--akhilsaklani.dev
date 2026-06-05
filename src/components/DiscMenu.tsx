@@ -1,5 +1,4 @@
-import { useState, useEffect } from "react";
-import { motion, useMotionValue, useTransform } from "framer-motion";
+import { motion, useMotionValue, useTransform, type PanInfo } from "framer-motion";
 import {
   ChevronLeft,
   ChevronRight,
@@ -48,21 +47,15 @@ const icons = {
 };
 
 const DiscMenu = () => {
-  const [currentIndex, setCurrentIndex] = useState(0);
   const dragX = useMotionValue(0);
   const rotation = useTransform(dragX, [-100, 100], [-30, 30]);
 
   const navigate = useNavigate();
   const location = useLocation();
 
-  // Handle URL updates
-  useEffect(() => {
-    const path = location.pathname;
-    const index = paths.indexOf(path);
-    if (index !== -1 && index !== currentIndex) {
-      setCurrentIndex(index);
-    }
-  }, [location]);
+  const path = location.pathname;
+  const pathIndex = paths.indexOf(path);
+  const currentIndex = pathIndex !== -1 ? pathIndex : 0;
 
   // Rotate section and update URL
   const rotateTo = (dir: "left" | "right") => {
@@ -71,11 +64,10 @@ const DiscMenu = () => {
         ? (currentIndex - 1 + items.length) % items.length
         : (currentIndex + 1) % items.length;
 
-    setCurrentIndex(newIndex);
     navigate(paths[newIndex]);
   };
 
-  const handleDragEnd = (_: any, info: { offset: { x: number } }) => {
+  const handleDragEnd = (_: unknown, info: PanInfo) => {
     if (info.offset.x > 50) {
       rotateTo("left");
     } else if (info.offset.x < -50) {

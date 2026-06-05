@@ -42,24 +42,99 @@ type Message = {
   parts: { text: string }[];
 };
 
-const SUGGESTIONS = [
-  "Who is Akhil?",
-  "What is his tech stack?",
-  "Tell me about his projects",
-  "Show education details"
-];
+const SUGGESTIONS_MAP: Record<string, string[]> = {
+  home: [
+    "Who is Akhil?",
+    "What is his tech stack?",
+    "Tell me about his projects",
+    "Show education details",
+  ],
+  about: [
+    "What is Akhil's background?",
+    "Where is he based?",
+    "What are his hobbies?",
+    "Show education timeline",
+  ],
+  projects: [
+    "Explain SplitSmart project",
+    "What is BingeBuddy AI?",
+    "What tech stack does he use?",
+    "Tell me about LogicMint",
+  ],
+  skills: [
+    "What are his frontend skills?",
+    "What backend tech does he use?",
+    "What programming languages?",
+    "Is he familiar with AI/ML?",
+  ],
+  contact: [
+    "How can I contact Akhil?",
+    "Get his LinkedIn profile",
+    "What is his email?",
+    "Is he open to remote work?",
+  ],
+};
 
 const API_KEY = import.meta.env.VITE_GEMINI_API_KEY || "";
 const GEMINI_URL = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${API_KEY}`;
 
-const AiAssistant = () => {
+type Props = {
+  activeTab?: string;
+};
+
+const AiAssistant = ({ activeTab }: Props) => {
   const [isOpen, setIsOpen] = useState(false);
   const [showTooltip, setShowTooltip] = useState(false);
-  const [messages, setMessages] = useState<Message[]>([]);
+  const [messages, setMessages] = useState<Message[]>(() => {
+    if (typeof window !== "undefined") {
+      const saved = localStorage.getItem("ai-chat-messages");
+      if (saved) {
+        try {
+          return JSON.parse(saved);
+        } catch {
+          return [];
+        }
+      }
+    }
+    return [];
+  });
   const [input, setInput] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  const [currentSection, setCurrentSection] = useState("home");
 
   const messagesEndRef = useRef<HTMLDivElement>(null);
+
+  // Sync suggestion category depending on scroll position (landing page) or activeTab (modular tabs page)
+  useEffect(() => {
+    if (activeTab) {
+      return;
+    }
+
+    const handleScroll = () => {
+      const scrollPosition = window.scrollY + window.innerHeight / 2;
+      const sections = ["home", "about", "projects", "skills", "contact"];
+      for (const sectionId of sections) {
+        const element = document.getElementById(sectionId);
+        if (element) {
+          const { offsetTop, offsetHeight } = element;
+          if (scrollPosition >= offsetTop && scrollPosition < offsetTop + offsetHeight) {
+            setCurrentSection(sectionId);
+            break;
+          }
+        }
+      }
+    };
+
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, [activeTab]);
+
+  // Persist messages in localStorage
+  useEffect(() => {
+    if (messages.length > 0) {
+      localStorage.setItem("ai-chat-messages", JSON.stringify(messages));
+    }
+  }, [messages]);
 
   // Trigger speech bubble tooltip after 3 seconds
   useEffect(() => {
@@ -103,22 +178,16 @@ const AiAssistant = () => {
       parts: [{ text: textToSend }]
     };
 
-    setMessages((prev) => [...prev, userMessage]);
+    const newMessages = [...messages, userMessage];
+    setMessages(newMessages);
     setInput("");
     setIsLoading(true);
 
     try {
-      // Build history excluding the welcome message if needed, or including it
-      const conversationHistory = messages.map(msg => ({
+      const conversationHistory = newMessages.map(msg => ({
         role: msg.role === "model" ? "model" : "user",
         parts: msg.parts
       }));
-
-      // Add current message
-      conversationHistory.push({
-        role: "user",
-        parts: [{ text: textToSend }]
-      });
 
       const response = await fetch(GEMINI_URL, {
         method: "POST",
@@ -166,6 +235,20 @@ const AiAssistant = () => {
     e.stopPropagation();
     setShowTooltip(false);
     localStorage.setItem("seen-ai-tooltip", "true");
+  };
+
+  const suggestions = SUGGESTIONS_MAP[currentSection] || SUGGESTIONS_MAP.home;
+
+  const clearChat = () => {
+    if (window.confirm("Are you sure you want to clear chat history?")) {
+      setMessages([
+        {
+          role: "model",
+          parts: [{ text: "Hi! I'm Akhil's AI assistant. Ask me anything about his skills, experience, projects, or background!" }]
+        }
+      ]);
+      localStorage.removeItem("ai-chat-messages");
+    }
   };
 
   return (
@@ -241,13 +324,24 @@ const AiAssistant = () => {
                   <p className="text-[10px] text-zinc-500 font-bold uppercase tracking-wider">Online & grounded</p>
                 </div>
               </div>
-              <button
-                onClick={() => setIsOpen(false)}
-                className="p-1.5 rounded-xl border border-white/5 bg-white/5 hover:bg-white/10 text-zinc-400 hover:text-white transition-all cursor-pointer"
-                title="Close chat"
-              >
-                <X size={16} />
-              </button>
+              <div className="flex items-center gap-1.5">
+                {messages.length > 1 && (
+                  <button
+                    onClick={clearChat}
+                    className="text-[10px] text-zinc-500 hover:text-red-400 font-extrabold uppercase tracking-wider px-2 py-1.5 rounded-xl border border-white/5 bg-white/5 hover:bg-white/10 transition-all cursor-pointer"
+                    title="Clear history"
+                  >
+                    Clear
+                  </button>
+                )}
+                <button
+                  onClick={() => setIsOpen(false)}
+                  className="p-1.5 rounded-xl border border-white/5 bg-white/5 hover:bg-white/10 text-zinc-400 hover:text-white transition-all cursor-pointer"
+                  title="Close chat"
+                >
+                  <X size={16} />
+                </button>
+              </div>
             </div>
 
             {/* Message Area */}
@@ -267,7 +361,7 @@ const AiAssistant = () => {
                     <div
                       className={`max-w-[78%] px-4 py-2.5 rounded-2xl text-sm leading-relaxed ${
                         isModel
-                          ? "bg-white/[0.03] border border-white/5 text-zinc-300 rounded-tl-sm"
+                          ? "bg-white/[0.03] border border-white/5 text-zinc-300 rounded-tl-sm whitespace-pre-wrap"
                           : "bg-blue-600 text-white rounded-tr-sm"
                       }`}
                     >
@@ -296,7 +390,7 @@ const AiAssistant = () => {
             {/* Quick Suggestions (Only show when not loading) */}
             {!isLoading && (
               <div className="p-3 bg-white/[0.01] border-t border-white/5 flex flex-wrap gap-1.5 justify-start flex-shrink-0">
-                {SUGGESTIONS.map((sug) => (
+                {suggestions.map((sug) => (
                   <button
                     key={sug}
                     onClick={() => handleSendMessage(sug)}

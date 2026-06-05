@@ -23,10 +23,10 @@ type Props = {
 
 const BottomNavBar = ({ forcedTab, setForcedTab }: Props) => {
   const [activeSection, setActiveSection] = useState("home");
+  const activeSectionComputed = forcedTab || activeSection;
 
   useEffect(() => {
     if (forcedTab) {
-      setActiveSection(forcedTab);
       return;
     }
 
@@ -61,7 +61,7 @@ const BottomNavBar = ({ forcedTab, setForcedTab }: Props) => {
       <nav className="bg-black/60 backdrop-blur-xl border border-white/10 rounded-2xl px-2 py-2 shadow-2xl pointer-events-auto">
         <div className="flex items-center gap-1 sm:gap-2 px-1">
           {navItems.map((item) => {
-            const isActive = item.id === activeSection;
+            const isActive = item.id === activeSectionComputed;
             const Icon = item.icon;
             return (
               <button
@@ -70,7 +70,6 @@ const BottomNavBar = ({ forcedTab, setForcedTab }: Props) => {
                   if (setForcedTab) {
                     e.preventDefault();
                     setForcedTab(item.id);
-                    setActiveSection(item.id);
                   } else {
                     scrollToSection(item.id);
                   }
