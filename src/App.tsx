@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { AnimatePresence, motion } from "framer-motion";
 import Navbar from "./components/Navbar";
 import GlobalBackground from "./components/Background";
 import BottomNavBar from "./components/BottomNavBar";
@@ -111,8 +112,19 @@ const App = () => {
             </Routes>
           ) : (
             <div className="flex flex-col min-h-screen">
-              <div className="flex-1">
-                {renderModularUI()}
+              <div className="flex-1 relative overflow-hidden">
+                <AnimatePresence mode="wait">
+                  <motion.div
+                    key={activeTab}
+                    initial={{ opacity: 0, y: 15, scale: 0.98 }}
+                    animate={{ opacity: 1, y: 0, scale: 1 }}
+                    exit={{ opacity: 0, y: -15, scale: 0.98 }}
+                    transition={{ duration: 0.25, ease: "easeInOut" }}
+                    className="w-full h-full"
+                  >
+                    {renderModularUI()}
+                  </motion.div>
+                </AnimatePresence>
               </div>
               <Footer uiType={uiType} onTabChange={setActiveTab} />
               <BottomNavBar forcedTab={activeTab} setForcedTab={setActiveTab} />

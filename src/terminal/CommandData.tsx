@@ -174,14 +174,124 @@ export const getCommandData = (setTerminalMode: (v: boolean) => void): Record<st
         <li>projects</li>
         <li>skills</li>
         <li>contact</li>
+        <li>neofetch / fetch (system details)</li>
         <li>game (interactive coding trivia game)</li>
         <li>chat (AI assistant direct CLI chat session)</li>
         <li>glow on/off</li>
+        <li>sound on/off</li>
         <li>settings ui landing/modular</li>
         <li className="text-blue-500 cursor-pointer hover:underline" onClick={() => setTerminalMode(false)}>gui</li>
         <li>clear</li>
         <li>help</li>
       </ul>
     </>
+  ),
+  neofetch: (
+    <div className="flex flex-col md:flex-row gap-6 font-mono text-xs sm:text-sm leading-relaxed p-4 border border-green-500/20 bg-black/40 rounded-xl max-w-2xl select-none text-left">
+      {/* Left panel: ASCII Art */}
+      <pre className="text-green-400 font-bold leading-none select-none text-left hidden sm:block">
+{`   _     _  _     _ _____ _      
+  / \\   / \\/ \\   / /__ __/ \\     
+  | |   | || |   | | / \\ | |     
+  | |___| || |___| | | | | |___  
+  \\____/\\_/\\____/\\_/ \\_/ \\____/  
+                                 
+      #####################      
+      #  _______________  #      
+      #  |             |  #      
+      #  |   akhil     |  #      
+      #  |   @dev      |  #      
+      #  |_____________|  #      
+      #                   #      
+      #####################      
+              #####              
+           ###########           `}
+      </pre>
+
+      {/* Right panel: Details */}
+      <div className="flex-1 flex flex-col justify-center text-left">
+        <div className="text-green-300 font-bold mb-2">akhil@dev-environment</div>
+        <div className="h-px bg-green-500/30 mb-2" />
+        <div className="grid grid-cols-[100px_1fr] gap-y-2">
+          <span className="text-green-500 font-bold">OS:</span>
+          <span>Windows 11 Home x86_64</span>
+          
+          <span className="text-green-500 font-bold">Host:</span>
+          <span>ASUS ROG Strix G15</span>
+          
+          <span className="text-green-500 font-bold">Kernel:</span>
+          <span>NT 10.0.22631</span>
+          
+          <span className="text-green-500 font-bold">Shell:</span>
+          <span>PowerShell 7.4</span>
+          
+          <span className="text-green-500 font-bold">CPU:</span>
+          <span>AMD Ryzen 7 5800H @ 3.20GHz</span>
+          
+          <span className="text-green-500 font-bold">GPU:</span>
+          <span>AMD Radeon + Nvidia RTX 3060</span>
+          
+          <span className="text-green-500 font-bold">Memory:</span>
+          <span>16384MiB (16GB)</span>
+          
+          <span className="text-green-500 font-bold">Status:</span>
+          <span className="text-green-400 font-extrabold animate-pulse">ACTIVE // CALIBRATED</span>
+        </div>
+      </div>
+    </div>
+  ),
+  fetch: (
+    <div className="flex flex-col md:flex-row gap-6 font-mono text-xs sm:text-sm leading-relaxed p-4 border border-green-500/20 bg-black/40 rounded-xl max-w-2xl select-none text-left">
+      {/* Left panel: ASCII Art */}
+      <pre className="text-green-400 font-bold leading-none select-none text-left hidden sm:block">
+{`   _     _  _     _ _____ _      
+  / \\   / \\/ \\   / /__ __/ \\     
+  | |   | || |   | | / \\ | |     
+  | |___| || |___| | | | | |___  
+  \\____/\\_/\\____/\\_/ \\_/ \\____/  
+                                 
+      #####################      
+      #  _______________  #      
+      #  |             |  #      
+      #  |   akhil     |  #      
+      #  |   @dev      |  #      
+      #  |_____________|  #      
+      #                   #      
+      #####################      
+              #####              
+           ###########           `}
+      </pre>
+
+      {/* Right panel: Details */}
+      <div className="flex-1 flex flex-col justify-center text-left">
+        <div className="text-green-300 font-bold mb-2">akhil@dev-environment</div>
+        <div className="h-px bg-green-500/30 mb-2" />
+        <div className="grid grid-cols-[100px_1fr] gap-y-2">
+          <span className="text-green-500 font-bold">OS:</span>
+          <span>Windows 11 Home x86_64</span>
+          
+          <span className="text-green-500 font-bold">Host:</span>
+          <span>ASUS ROG Strix G15</span>
+          
+          <span className="text-green-500 font-bold">Kernel:</span>
+          <span>NT 10.0.22631</span>
+          
+          <span className="text-green-500 font-bold">Shell:</span>
+          <span>PowerShell 7.4</span>
+          
+          <span className="text-green-500 font-bold">CPU:</span>
+          <span>AMD Ryzen 7 5800H @ 3.20GHz</span>
+          
+          <span className="text-green-500 font-bold">GPU:</span>
+          <span>AMD Radeon + Nvidia RTX 3060</span>
+          
+          <span className="text-green-500 font-bold">Memory:</span>
+          <span>16384MiB (16GB)</span>
+          
+          <span className="text-green-500 font-bold">Status:</span>
+          <span className="text-green-400 font-extrabold animate-pulse">ACTIVE // CALIBRATED</span>
+        </div>
+      </div>
+    </div>
   ),
 });
