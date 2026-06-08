@@ -54,6 +54,7 @@ const App = () => {
   };
 
   const [activeTab, setActiveTab] = useState("home");
+  const [isAiOpen, setIsAiOpen] = useState(false);
 
   const handleUiToggle = (type: "landing" | "modular") => {
     setUiType(type);
@@ -81,6 +82,8 @@ const App = () => {
         setUiType={handleUiToggle}
         theme={theme}
         setTheme={setTheme}
+        isAiOpen={isAiOpen}
+        setIsAiOpen={setIsAiOpen}
       />
 
       {!terminalMode ? (
@@ -137,7 +140,13 @@ const App = () => {
           setUiType={handleUiToggle}
         />
       )}
-      {!terminalMode && <AiAssistant activeTab={uiType === "landing" ? undefined : activeTab} />}
+      {!terminalMode && (
+        <AiAssistant
+          activeTab={uiType === "landing" ? undefined : activeTab}
+          isOpen={isAiOpen}
+          setIsOpen={setIsAiOpen}
+        />
+      )}
     </div>
   );
 };

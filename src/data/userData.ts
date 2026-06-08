@@ -144,7 +144,7 @@ export const projectData = [
     name: "Personalized Portfolio",
     description: "A personal portfolio website showcasing projects, skills, and developer identity. Features a fully functional custom terminal deck, real-time command suggestions, and a smooth fluid visual theme.",
     tech: ["React", "TypeScript", "Tailwind CSS", "Framer Motion", "Vite"],
-    live: "https://akhilsaklani.dev",
+    live: "https://akhilsaklani-dev.vercel.app/",
     github: "https://github.com/akhilsaklani7coder/Portfolio--akhilsaklani.dev",
     category: "Web",
   },
@@ -173,7 +173,7 @@ export const projectData = [
 
 
 export const resume = {
-  "full-stack-developer": "https://rxresu.me/akhil/full-stack-developer",
+  "full-stack-developer": "https://drive.google.com/file/d/17JCGXhkabSrHT3FGyEkwBVneEPjC-u6T/view",
 };
 
 export const education = [
@@ -181,7 +181,7 @@ export const education = [
     degree: "B.Tech in Computer Science & Engineering (CSE)",
     institution: "Graphic Era Hill University, Dehradun",
     duration: "2024 – 2028",
-    info: "Current CGPA: 7.76"
+    info: "Current CGPA: 7.7"
   },
   {
     degree: "Higher Secondary (12th)",

@@ -176,6 +176,8 @@ export const getCommandData = (setTerminalMode: (v: boolean) => void): Record<st
         <li>contact</li>
         <li>neofetch / fetch (system details)</li>
         <li>game (interactive coding trivia game)</li>
+        <li>snake (play retro Snake game)</li>
+        <li>matrix (cascading code screensaver)</li>
         <li>chat (AI assistant direct CLI chat session)</li>
         <li>glow on/off</li>
         <li>sound on/off</li>

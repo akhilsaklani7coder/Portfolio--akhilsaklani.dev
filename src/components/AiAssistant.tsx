@@ -80,10 +80,11 @@ const GEMINI_URL = `https://generativelanguage.googleapis.com/v1beta/models/gemi
 
 type Props = {
   activeTab?: string;
+  isOpen: boolean;
+  setIsOpen: (isOpen: boolean) => void;
 };
 
-const AiAssistant = ({ activeTab }: Props) => {
-  const [isOpen, setIsOpen] = useState(false);
+const AiAssistant = ({ activeTab, isOpen, setIsOpen }: Props) => {
   const [showTooltip, setShowTooltip] = useState(false);
   const [messages, setMessages] = useState<Message[]>(() => {
     if (typeof window !== "undefined") {
@@ -136,31 +137,9 @@ const AiAssistant = ({ activeTab }: Props) => {
     }
   }, [messages]);
 
-  // Trigger speech bubble tooltip after 3 seconds
+  // Add welcome message if chat is empty
   useEffect(() => {
-    const hasSeenTooltip = localStorage.getItem("seen-ai-tooltip");
-    if (!hasSeenTooltip) {
-      const timer = setTimeout(() => {
-        setShowTooltip(true);
-      }, 3000);
-      return () => clearTimeout(timer);
-    }
-  }, []);
-
-  // Scroll to bottom of chat
-  useEffect(() => {
-    if (messagesEndRef.current) {
-      messagesEndRef.current.scrollIntoView({ behavior: "smooth" });
-    }
-  }, [messages, isLoading]);
-
-  const handleOpen = () => {
-    setIsOpen(true);
-    setShowTooltip(false);
-    localStorage.setItem("seen-ai-tooltip", "true");
-    
-    // Add welcome message if chat is empty
-    if (messages.length === 0) {
+    if (isOpen && messages.length === 0) {
       setMessages([
         {
           role: "model",
@@ -168,7 +147,25 @@ const AiAssistant = ({ activeTab }: Props) => {
         }
       ]);
     }
-  };
+  }, [isOpen, messages.length]);
+
+  // Trigger speech bubble tooltip after 3 seconds for desktop launcher
+  useEffect(() => {
+    const hasSeenTooltip = localStorage.getItem("seen-ai-tooltip");
+    if (!hasSeenTooltip && !isOpen) {
+      const timer = setTimeout(() => {
+        setShowTooltip(true);
+      }, 3000);
+      return () => clearTimeout(timer);
+    }
+  }, [isOpen]);
+
+  // Scroll to bottom of chat
+  useEffect(() => {
+    if (messagesEndRef.current) {
+      messagesEndRef.current.scrollIntoView({ behavior: "smooth" });
+    }
+  }, [messages, isLoading]);
 
   const handleSendMessage = async (textToSend: string) => {
     if (!textToSend.trim()) return;
@@ -231,12 +228,6 @@ const AiAssistant = ({ activeTab }: Props) => {
     handleSendMessage(input);
   };
 
-  const dismissTooltip = (e: React.MouseEvent) => {
-    e.stopPropagation();
-    setShowTooltip(false);
-    localStorage.setItem("seen-ai-tooltip", "true");
-  };
-
   const suggestions = SUGGESTIONS_MAP[currentSection] || SUGGESTIONS_MAP.home;
 
   const clearChat = () => {
@@ -253,8 +244,8 @@ const AiAssistant = ({ activeTab }: Props) => {
 
   return (
     <>
-      {/* Floating Action Launcher and Tooltip */}
-      <div className="fixed bottom-6 right-6 sm:bottom-8 sm:right-8 z-[100] flex items-center gap-3">
+      {/* Floating Action Launcher and Tooltip (Only visible on sm: and above) */}
+      <div className="hidden sm:flex fixed bottom-8 right-8 z-[100] items-center gap-3">
         {/* Timed Notification speech bubble */}
         <AnimatePresence>
           {showTooltip && !isOpen && (
@@ -262,14 +253,22 @@ const AiAssistant = ({ activeTab }: Props) => {
               initial={{ opacity: 0, scale: 0.85, x: 20 }}
               animate={{ opacity: 1, scale: 1, x: 0 }}
               exit={{ opacity: 0, scale: 0.85 }}
-              onClick={handleOpen}
-              className="relative bg-blue-600/95 hover:bg-blue-600 backdrop-blur-md text-white font-semibold text-xs sm:text-sm px-4 py-3 rounded-2xl shadow-2xl border border-blue-500/20 max-w-xs cursor-pointer flex items-center gap-2 group"
+              onClick={() => {
+                setIsOpen(true);
+                setShowTooltip(false);
+                localStorage.setItem("seen-ai-tooltip", "true");
+              }}
+              className="relative bg-blue-600/95 hover:bg-blue-600 backdrop-blur-md text-white font-semibold text-sm px-4 py-3 rounded-2xl shadow-2xl border border-blue-500/20 max-w-xs cursor-pointer flex items-center gap-2 group"
             >
               <div className="absolute right-[-6px] top-1/2 -translate-y-1/2 w-0 h-0 border-t-[6px] border-t-transparent border-b-[6px] border-b-transparent border-l-[6px] border-l-blue-600/95" />
               <Bot size={16} className="animate-bounce" />
               <span>Ask Akhil's AI!</span>
               <button 
-                onClick={dismissTooltip} 
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setShowTooltip(false);
+                  localStorage.setItem("seen-ai-tooltip", "true");
+                }} 
                 className="text-white/60 hover:text-white ml-1.5 p-0.5 rounded-full hover:bg-white/10"
               >
                 <X size={12} />
@@ -285,7 +284,7 @@ const AiAssistant = ({ activeTab }: Props) => {
             animate={{ scale: 1, rotate: 0 }}
             whileHover={{ scale: 1.1 }}
             whileTap={{ scale: 0.95 }}
-            onClick={handleOpen}
+            onClick={() => setIsOpen(true)}
             className="w-14 h-14 rounded-full bg-blue-600 hover:bg-blue-700 text-white flex items-center justify-center shadow-xl shadow-blue-500/25 border border-blue-500/30 cursor-pointer relative group"
             title="Chat with Akhil's AI"
           >
@@ -303,7 +302,7 @@ const AiAssistant = ({ activeTab }: Props) => {
             initial={{ opacity: 0, scale: 0.9, y: 50 }}
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.9, y: 50 }}
-            className="fixed bottom-6 right-6 sm:bottom-8 sm:right-8 w-[92vw] sm:w-[400px] h-[550px] max-h-[82vh] rounded-[2rem] border border-white/10 bg-[#09090b]/90 backdrop-blur-xl shadow-2xl z-[100] flex flex-col overflow-hidden text-left"
+            className="fixed bottom-24 right-6 sm:bottom-8 sm:right-8 w-[92vw] sm:w-[400px] h-[550px] max-h-[70vh] sm:max-h-[82vh] rounded-[2rem] border border-white/10 bg-[#09090b]/90 backdrop-blur-xl shadow-2xl z-[100] flex flex-col overflow-hidden text-left"
           >
             {/* Header */}
             <div className="p-4 border-b border-white/5 bg-white/[0.02] flex items-center justify-between flex-shrink-0">

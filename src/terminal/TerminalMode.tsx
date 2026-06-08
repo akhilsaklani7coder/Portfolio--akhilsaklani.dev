@@ -19,7 +19,9 @@ type Props = {
 
 type ActiveSession =
   | { type: "quiz"; currentQuestionIndex: number; score: number }
-  | { type: "chat"; history: { role: "user" | "model"; parts: { text: string }[] }[] };
+  | { type: "chat"; history: { role: "user" | "model"; parts: { text: string }[] }[] }
+  | { type: "snake" }
+  | { type: "matrix" };
 
 const QUIZ_QUESTIONS = [
   {
@@ -161,6 +163,286 @@ const playKeyClick = (isEnter = false) => {
   } catch (err) {
     console.error("Web Audio API blocked or not supported:", err);
   }
+};
+
+const SnakeGame = ({ onExit }: { onExit: () => void }) => {
+  const GRID_SIZE = 16;
+  const INITIAL_SPEED = 140; // ms per tick
+
+  type Position = { x: number; y: number };
+  const [snake, setSnake] = useState<Position[]>([
+    { x: 8, y: 8 },
+    { x: 8, y: 9 },
+    { x: 8, y: 10 },
+  ]);
+  const [direction, setDirection] = useState<Position>({ x: 0, y: -1 }); // moving up initially
+  const [food, setFood] = useState<Position>({ x: 4, y: 4 });
+  const [gameOver, setGameOver] = useState(false);
+  const [score, setScore] = useState(0);
+  const [highScore, setHighScore] = useState(() => {
+    if (typeof window !== "undefined") {
+      return Number(localStorage.getItem("snake-highscore") || "0");
+    }
+    return 0;
+  });
+
+  const directionRef = useRef(direction);
+  directionRef.current = direction;
+
+  // Generate random food position not on the snake
+  const generateFood = (currentSnake: Position[]): Position => {
+    while (true) {
+      const newFood = {
+        x: Math.floor(Math.random() * GRID_SIZE),
+        y: Math.floor(Math.random() * GRID_SIZE),
+      };
+      if (!currentSnake.some(segment => segment.x === newFood.x && segment.y === newFood.y)) {
+        return newFood;
+      }
+    }
+  };
+
+  // Handle key press
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      const key = e.key.toLowerCase();
+      
+      if (key === "escape" || key === "q") {
+        e.preventDefault();
+        onExit();
+        return;
+      }
+
+      if (gameOver) {
+        if (e.key === " " || key === "r") {
+          e.preventDefault();
+          // Reset game
+          setSnake([
+            { x: 8, y: 8 },
+            { x: 8, y: 9 },
+            { x: 8, y: 10 },
+          ]);
+          setDirection({ x: 0, y: -1 });
+          setFood({ x: 4, y: 4 });
+          setGameOver(false);
+          setScore(0);
+        }
+        return;
+      }
+
+      const currentDir = directionRef.current;
+      if ((e.key === "ArrowUp" || key === "w") && currentDir.y === 0) {
+        e.preventDefault();
+        setDirection({ x: 0, y: -1 });
+      } else if ((e.key === "ArrowDown" || key === "s") && currentDir.y === 0) {
+        e.preventDefault();
+        setDirection({ x: 0, y: 1 });
+      } else if ((e.key === "ArrowLeft" || key === "a") && currentDir.x === 0) {
+        e.preventDefault();
+        setDirection({ x: -1, y: 0 });
+      } else if ((e.key === "ArrowRight" || key === "d") && currentDir.x === 0) {
+        e.preventDefault();
+        setDirection({ x: 1, y: 0 });
+      }
+    };
+
+    window.addEventListener("keydown", handleKeyDown, { passive: false });
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [gameOver, onExit]);
+
+  // Main game tick loop
+  useEffect(() => {
+    if (gameOver) return;
+
+    const tick = () => {
+      setSnake((prevSnake) => {
+        const head = prevSnake[0];
+        const dir = directionRef.current;
+        const newHead = {
+          x: head.x + dir.x,
+          y: head.y + dir.y,
+        };
+
+        // Check wall collision
+        if (
+          newHead.x < 0 ||
+          newHead.x >= GRID_SIZE ||
+          newHead.y < 0 ||
+          newHead.y >= GRID_SIZE
+        ) {
+          setGameOver(true);
+          return prevSnake;
+        }
+
+        // Check self collision
+        if (prevSnake.some((seg) => seg.x === newHead.x && seg.y === newHead.y)) {
+          setGameOver(true);
+          return prevSnake;
+        }
+
+        const newSnake = [newHead, ...prevSnake];
+
+        // Check food collision
+        if (newHead.x === food.x && newHead.y === food.y) {
+          setScore((s) => {
+            const nextScore = s + 10;
+            if (nextScore > highScore) {
+              setHighScore(nextScore);
+              localStorage.setItem("snake-highscore", String(nextScore));
+            }
+            return nextScore;
+          });
+          setFood(generateFood(newSnake));
+        } else {
+          newSnake.pop();
+        }
+
+        return newSnake;
+      });
+    };
+
+    const interval = setInterval(tick, INITIAL_SPEED);
+    return () => clearInterval(interval);
+  }, [food, gameOver, highScore]);
+
+  // Render the board
+  const renderBoard = () => {
+    const rows: string[] = [];
+    rows.push("+" + "-".repeat(GRID_SIZE * 2) + "+");
+
+    for (let y = 0; y < GRID_SIZE; y++) {
+      let rowStr = "|";
+      for (let x = 0; x < GRID_SIZE; x++) {
+        const isHead = snake[0].x === x && snake[0].y === y;
+        const isBody = !isHead && snake.some((seg) => seg.x === x && seg.y === y);
+        const isFood = food.x === x && food.y === y;
+
+        if (isHead) {
+          rowStr += "O ";
+        } else if (isBody) {
+          rowStr += "o ";
+        } else if (isFood) {
+          rowStr += "@ ";
+        } else {
+          rowStr += "  ";
+        }
+      }
+      rowStr += "|";
+      rows.push(rowStr);
+    }
+
+    rows.push("+" + "-".repeat(GRID_SIZE * 2) + "+");
+    return rows.join("\n");
+  };
+
+  return (
+    <div className="flex flex-col items-center justify-center font-mono select-none text-green-400 p-4 w-full max-w-sm mx-auto bg-black/80 border border-green-500/30 rounded-2xl shadow-[0_0_20px_rgba(34,197,94,0.15)] my-4 text-center">
+      <div className="flex items-center justify-between w-full mb-3 px-2 text-[11px]">
+        <span className="uppercase tracking-wider font-extrabold text-green-500">🕹️ CLI SNAKE</span>
+        <div className="space-x-3">
+          <span>SCORE: <strong className="text-white">{score}</strong></span>
+          <span>HI: <strong className="text-yellow-400">{highScore}</strong></span>
+        </div>
+      </div>
+
+      <pre className="bg-black text-green-500 font-mono text-[9px] sm:text-xs leading-none border border-green-500/20 p-2 rounded-lg mb-3 select-none">
+        {renderBoard()}
+      </pre>
+
+      {gameOver ? (
+        <div className="space-y-1.5">
+          <div className="text-red-500 font-bold uppercase animate-pulse text-xs">⚡ GAME OVER ⚡</div>
+          <div className="text-[10px] text-zinc-400">
+            Press <kbd className="bg-zinc-800 text-white px-1.5 py-0.5 rounded">SPACE</kbd> or <kbd className="bg-zinc-800 text-white px-1.5 py-0.5 rounded">R</kbd> to restart
+          </div>
+          <div className="text-[9px] text-zinc-600">
+            Or press <kbd className="bg-zinc-800 text-zinc-400 px-1.5 py-0.5 rounded">ESC</kbd> / <kbd className="bg-zinc-800 text-zinc-400 px-1.5 py-0.5 rounded">Q</kbd> to exit to shell
+          </div>
+        </div>
+      ) : (
+        <div className="space-y-0.5 text-[10px] text-zinc-500 font-medium">
+          <div>Use <kbd className="bg-zinc-800 text-white px-1 py-0.5 rounded">W A S D</kbd> / <kbd className="bg-zinc-800 text-white px-1 py-0.5 rounded">ARROWS</kbd> to move</div>
+          <div>Press <kbd className="bg-zinc-800 text-zinc-400 px-1 py-0.5 rounded">Q</kbd> or <kbd className="bg-zinc-800 text-zinc-400 px-1 py-0.5 rounded">ESC</kbd> to exit</div>
+        </div>
+      )}
+    </div>
+  );
+};
+
+const MatrixRain = ({ onExit }: { onExit: () => void }) => {
+  const canvasRef = useRef<HTMLCanvasElement>(null);
+
+  useEffect(() => {
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+
+    const ctx = canvas.getContext("2d");
+    if (!ctx) return;
+
+    const resizeCanvas = () => {
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+    };
+    resizeCanvas();
+    window.addEventListener("resize", resizeCanvas);
+
+    const chars = "ｦｧｨｩｪｫｬｭｮｯｰｱｲｳｴｵｶｷｸｹｺｻｼｽｾｿﾀﾁﾂﾃﾄﾅﾆﾇﾈﾉﾊﾋﾌﾍﾎﾏﾐﾑﾒﾓﾔﾕﾖﾗﾘﾙﾚﾛﾜﾝ1234567890ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+    const charArray = chars.split("");
+
+    const fontSize = 14;
+    const columns = Math.floor(canvas.width / fontSize) + 1;
+    const drops: number[] = Array(columns).fill(1);
+
+    let animationFrameId: number;
+
+    const draw = () => {
+      ctx.fillStyle = "rgba(0, 0, 0, 0.05)";
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+      ctx.fillStyle = "#0F0";
+      ctx.font = fontSize + "px monospace";
+
+      for (let i = 0; i < drops.length; i++) {
+        const text = charArray[Math.floor(Math.random() * charArray.length)];
+        const x = i * fontSize;
+        const y = drops[i] * fontSize;
+
+        ctx.fillText(text, x, y);
+
+        if (y > canvas.height && Math.random() > 0.975) {
+          drops[i] = 0;
+        }
+        drops[i]++;
+      }
+      animationFrameId = requestAnimationFrame(draw);
+    };
+
+    draw();
+
+    const handleInteraction = (e: MouseEvent | KeyboardEvent) => {
+      e.preventDefault();
+      onExit();
+    };
+
+    window.addEventListener("keydown", handleInteraction);
+    window.addEventListener("click", handleInteraction);
+
+    return () => {
+      cancelAnimationFrame(animationFrameId);
+      window.removeEventListener("resize", resizeCanvas);
+      window.removeEventListener("keydown", handleInteraction);
+      window.removeEventListener("click", handleInteraction);
+    };
+  }, [onExit]);
+
+  return (
+    <div className="fixed inset-0 bg-black z-50 cursor-pointer">
+      <canvas ref={canvasRef} className="block w-full h-full" />
+      <div className="absolute bottom-6 left-1/2 -translate-x-1/2 text-xs font-mono text-green-500/60 uppercase tracking-widest bg-black/60 border border-green-500/20 px-4 py-2 rounded-full pointer-events-none select-none animate-pulse">
+        Press any key or click to exit
+      </div>
+    </div>
+  );
 };
 
 const TerminalMode = ({ setTerminalMode, setUiType }: Props) => {
@@ -361,6 +643,18 @@ const TerminalMode = ({ setTerminalMode, setUiType }: Props) => {
       return;
     }
 
+    if (trimmed === "snake") {
+      pushLine({ text: "🎮 Launching retro Snake game...", type: "info" });
+      setActiveSession({ type: "snake" });
+      return;
+    }
+
+    if (trimmed === "matrix") {
+      pushLine({ text: "📟 Initializing Matrix digital rain screensaver...", type: "info" });
+      setActiveSession({ type: "matrix" });
+      return;
+    }
+
     if (trimmed === "chat") {
       pushLine({ text: "🤖 Initiated AI Chat Session. Ask anything about Akhil's experience. Type 'exit' to quit.", type: "info" });
       setActiveSession({ type: "chat", history: [] });
@@ -530,6 +824,10 @@ const TerminalMode = ({ setTerminalMode, setUiType }: Props) => {
         </div>
       )}
 
+      {activeSession?.type === "matrix" && (
+        <MatrixRain onExit={() => setActiveSession(null)} />
+      )}
+
       <div
         ref={terminalRef}
         className="z-10 relative flex-1 overflow-y-auto whitespace-pre-wrap space-y-2 pr-1"
@@ -547,13 +845,16 @@ const TerminalMode = ({ setTerminalMode, setUiType }: Props) => {
             {line.component}
           </div>
         ))}
-        <form
-          onSubmit={(e) => {
-            e.preventDefault();
-            handleCommand(input);
-          }}
-          className="flex items-center mb-4"
-        >
+        {activeSession?.type === "snake" ? (
+          <SnakeGame onExit={() => setActiveSession(null)} />
+        ) : (
+          <form
+            onSubmit={(e) => {
+              e.preventDefault();
+              handleCommand(input);
+            }}
+            className="flex items-center mb-4"
+          >
           <span className="pr-2 text-green-300">
             {activeSession
               ? activeSession.type === "quiz"
@@ -635,6 +936,7 @@ const TerminalMode = ({ setTerminalMode, setUiType }: Props) => {
             />
           </div>
         </form>
+      )}
       </div>
     </div>
   );

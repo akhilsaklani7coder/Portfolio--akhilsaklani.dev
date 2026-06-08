@@ -25,7 +25,7 @@ const DeveloperCard = () => {
   }, []);
 
   return (
-    <div className="relative w-[280px] min-[360px]:w-[310px] sm:w-[340px] lg:w-[320px] xl:w-[380px] aspect-square flex flex-col">
+    <div className="relative w-[280px] min-[360px]:w-[300px] sm:w-[340px] lg:w-[320px] xl:w-[380px] h-[250px] min-[360px]:h-[270px] sm:h-[340px] lg:h-[320px] xl:h-[380px] flex flex-col">
       {/* Corner bracket accents — matching the reference image (top-left & bottom-right) */}
       {/* Top-left bracket */}
       <div className="absolute -top-3 -left-3 w-12 h-12 border-t-2 border-l-2 border-blue-500/60 z-20 pointer-events-none" />
@@ -48,7 +48,7 @@ const DeveloperCard = () => {
           className="relative w-full h-full rounded-[2rem] border border-white/10 bg-[#0d1117]/90 backdrop-blur-2xl shadow-2xl group-hover:shadow-[0_0_50px_rgba(59,130,246,0.08)] group-hover:border-white/15 transition-all duration-700 overflow-hidden flex flex-col justify-between"
         >
           {/* Title Bar */}
-          <div className="flex items-center justify-between px-5 py-3.5 border-b border-white/[0.06] bg-white/[0.02]">
+          <div className="flex items-center justify-between px-4 py-2 sm:px-5 sm:py-3 border-b border-white/[0.06] bg-white/[0.02]">
             <div className="flex items-center gap-2">
               {/* macOS dots */}
               <div className="flex items-center gap-1.5">
@@ -59,25 +59,25 @@ const DeveloperCard = () => {
             </div>
 
             {/* Tab */}
-            <div className="flex items-center gap-1.5 px-3 py-1 rounded-md bg-white/[0.04] border border-white/[0.06]">
+            <div className="flex items-center gap-1.5 px-2.5 py-0.5 sm:px-3 sm:py-1 rounded-md bg-white/[0.04] border border-white/[0.06]">
               <svg width="12" height="12" viewBox="0 0 24 24" fill="none" className="text-blue-400">
                 <path d="M3 3L12 22L15 13L24 10L3 3Z" fill="currentColor" opacity="0.8" />
               </svg>
-              <span className="text-[11px] font-semibold text-zinc-400 tracking-wide">developer.ts</span>
+              <span className="text-[10px] sm:text-[11px] font-semibold text-zinc-400 tracking-wide">developer.ts</span>
             </div>
 
             <div className="w-[58px]" />
           </div>
 
           {/* Code Content */}
-          <div className="flex-1 flex flex-col justify-center py-4 font-mono text-[12.5px] leading-[1.85] select-none">
+          <div className="flex-1 flex flex-col justify-center py-1.5 sm:py-4 font-mono text-[12px] sm:text-[12.5px] leading-[1.7] sm:leading-[1.85] select-none">
             {codeLines.map((line, i) => (
               <div
                 key={i}
-                className="flex items-center hover:bg-white/[0.02] transition-colors duration-200 px-4"
+                className="flex items-center hover:bg-white/[0.02] transition-colors duration-200 px-3.5 sm:px-4"
               >
                 {/* Line Number */}
-                <span className="w-8 text-right mr-4 text-zinc-600 text-[11px] select-none flex-shrink-0">
+                <span className="w-6 sm:w-8 text-right mr-3 sm:mr-4 text-zinc-600 text-[10px] sm:text-[11px] select-none flex-shrink-0">
                   {line.lineNum}
                 </span>
 
@@ -91,7 +91,7 @@ const DeveloperCard = () => {
                   {/* Blinking cursor on line 7 */}
                   {line.lineNum === 7 && (
                     <span
-                      className="inline-block w-[2px] h-[14px] ml-0.5 align-middle transition-opacity duration-100"
+                      className="inline-block w-[2px] h-[13px] sm:h-[14px] ml-0.5 align-middle transition-opacity duration-100"
                       style={{
                         backgroundColor: "#3b82f6",
                         opacity: cursorVisible ? 0.9 : 0,
@@ -105,16 +105,16 @@ const DeveloperCard = () => {
           </div>
 
           {/* Status Bar */}
-          <div className="flex items-center justify-between px-4 py-1.5 border-t border-white/[0.06] bg-[#007acc]/10">
-            <div className="flex items-center gap-3">
-              <span className="text-[10px] font-semibold text-blue-400/80 uppercase tracking-wider">TypeScript</span>
-              <span className="text-[10px] text-zinc-600">•</span>
-              <span className="text-[10px] text-zinc-500 font-medium">UTF-8</span>
+          <div className="flex items-center justify-between px-3 py-1 sm:px-4 sm:py-1.5 border-t border-white/[0.06] bg-[#007acc]/10">
+            <div className="flex items-center gap-2 sm:gap-3">
+              <span className="text-[9px] sm:text-[10px] font-semibold text-blue-400/80 uppercase tracking-wider">TypeScript</span>
+              <span className="text-[9px] sm:text-[10px] text-zinc-600">•</span>
+              <span className="text-[9px] sm:text-[10px] text-zinc-500 font-medium">UTF-8</span>
             </div>
-            <div className="flex items-center gap-3">
-              <span className="text-[10px] text-zinc-500 font-medium">Ln 7, Col 3</span>
-              <span className="text-[10px] text-zinc-600">•</span>
-              <span className="text-[10px] text-zinc-500 font-medium">Spaces: 2</span>
+            <div className="flex items-center gap-2 sm:gap-3">
+              <span className="text-[9px] sm:text-[10px] text-zinc-500 font-medium">Ln 7, Col 3</span>
+              <span className="text-[9px] sm:text-[10px] text-zinc-600">•</span>
+              <span className="text-[9px] sm:text-[10px] text-zinc-500 font-medium">Spaces: 2</span>
             </div>
           </div>
         </motion.div>

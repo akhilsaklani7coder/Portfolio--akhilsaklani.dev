@@ -82,7 +82,7 @@ const Hero = ({ onTabChange, uiType }: HeroProps) => {
               transition={{ delay: 0.2, duration: 0.8, ease: "circOut" }}
               className="text-4xl min-[375px]:text-5xl sm:text-6xl md:text-7xl lg:text-[76px] xl:text-8xl font-black leading-[0.85] tracking-tighter text-white"
             >
-              <span className="block">{personalInfo.name}</span>
+              <span className="block bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">{personalInfo.name}</span>
             </motion.h1>
 
             {/* Premium Animated Role Switcher */}
@@ -118,7 +118,7 @@ const Hero = ({ onTabChange, uiType }: HeroProps) => {
           className="flex flex-col items-center lg:items-start gap-5 pt-4 w-full"
         >
           {/* Buttons Row */}
-          <div className="flex flex-wrap items-center justify-center lg:justify-start gap-4 w-full lg:w-auto">
+          <div className="grid grid-cols-2 sm:flex sm:flex-row items-center justify-center lg:justify-start gap-3 w-full max-w-[380px] sm:max-w-none mx-auto lg:mx-0 lg:w-auto">
             <a
               href="#projects"
               onClick={(e) => {
@@ -130,9 +130,10 @@ const Hero = ({ onTabChange, uiType }: HeroProps) => {
                   document.getElementById("projects")?.scrollIntoView({ behavior: "smooth" });
                 }
               }}
-              className="px-6 py-3.5 rounded-full bg-white text-black font-black text-base hover:bg-zinc-100 active:scale-95 transition-all duration-300 flex items-center justify-center gap-2 group shadow-xl shadow-white/10"
+              className="px-4 py-3 sm:px-6 sm:py-3.5 rounded-3xl sm:rounded-full bg-white text-black font-black text-sm sm:text-base hover:bg-zinc-100 active:scale-95 transition-all duration-300 flex flex-col sm:flex-row items-center justify-center text-center leading-tight gap-0.5 sm:gap-2 shadow-xl shadow-white/10"
             >
-              Selected Works
+              <span className="block sm:inline">Selected</span>
+              <span className="block sm:inline">Works</span>
             </a>
 
             <a
@@ -146,10 +147,15 @@ const Hero = ({ onTabChange, uiType }: HeroProps) => {
                   document.getElementById("contact")?.scrollIntoView({ behavior: "smooth" });
                 }
               }}
-              className="px-6 py-3.5 rounded-full bg-blue-600 hover:bg-blue-700 text-white font-black text-base transition-all duration-300 flex items-center justify-center gap-2 group shadow-xl shadow-blue-500/20"
+              className="px-4 py-3 sm:px-6 sm:py-3.5 rounded-3xl sm:rounded-full bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white font-black text-sm sm:text-base transition-all duration-300 flex flex-col sm:flex-row items-center justify-center text-center leading-tight gap-1 sm:gap-2 shadow-xl shadow-blue-500/20 active:scale-95 border border-blue-400/20 group"
             >
-              Get in Touch
-              <Send className="group-hover:translate-x-1 group-hover:-translate-y-1 transition-transform" size={18} />
+              <span className="flex items-center justify-center gap-1 sm:gap-2">
+                <span className="flex flex-col sm:flex-row sm:gap-1">
+                  <span>Get in</span>
+                  <span>Touch</span>
+                </span>
+                <Send className="group-hover:translate-x-1 group-hover:-translate-y-1 transition-transform w-4 h-4 sm:w-[18px] sm:h-[18px] flex-shrink-0" />
+              </span>
             </a>
           </div>
 
@@ -172,7 +178,7 @@ const Hero = ({ onTabChange, uiType }: HeroProps) => {
       </div>
 
       {/* Right: Developer Identity Card */}
-      <div className="flex-shrink-0 relative z-10 flex items-center justify-center w-full lg:w-auto mt-8 lg:mt-0">
+      <div className="flex-shrink-0 relative z-10 flex items-center justify-center w-full lg:w-auto mt-2 sm:mt-4 lg:mt-0 -translate-y-[20px] lg:-translate-y-[5px]">
         <DeveloperCard />
       </div>
     </motion.section>

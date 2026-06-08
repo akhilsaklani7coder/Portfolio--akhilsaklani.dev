@@ -15,6 +15,24 @@ const Contact = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitStatus, setSubmitStatus] = useState<"success" | "error" | null>(null);
 
+  const templates = [
+    {
+      label: "💼 Contract Work",
+      lookingFor: "full-stack",
+      message: "Hi Akhil, I saw your portfolio and would love to discuss a contracting opportunity for React & AI Full-Stack development. We have an upcoming project that could use your expertise.",
+    },
+    {
+      label: "🚀 Hiring Full-Time",
+      lookingFor: "full-stack",
+      message: "Hi Akhil, I'm recruiting for a full-time software engineering role and was very impressed by your portfolio. Let's connect to discuss our open positions!",
+    },
+    {
+      label: "☕ Tech Discussion",
+      lookingFor: "consulting",
+      message: "Hi Akhil, I'd love to chat about your projects and share thoughts on the latest React and AI tech trends. Let's schedule a brief virtual coffee catch up!",
+    },
+  ];
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsSubmitting(true);
@@ -291,9 +309,35 @@ const Contact = () => {
 
                   {/* Message field */}
                   <div className="col-span-1 md:col-span-2 p-6 flex flex-col focus-within:bg-white/[0.04] transition-all duration-300">
-                    <label htmlFor="form-message" className="text-zinc-500 font-extrabold text-[10px] tracking-widest uppercase mb-1">
-                      MESSAGE *
-                    </label>
+                    <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-3">
+                      <label htmlFor="form-message" className="text-zinc-500 font-extrabold text-[10px] tracking-widest uppercase">
+                        MESSAGE *
+                      </label>
+                      <span className="text-[10px] font-black text-zinc-500 uppercase tracking-widest">
+                        Quick Templates:
+                      </span>
+                    </div>
+
+                    <div className="flex flex-wrap gap-2 mb-4">
+                      {templates.map((tpl) => (
+                        <button
+                          key={tpl.label}
+                          type="button"
+                          disabled={isSubmitting}
+                          onClick={() => {
+                            setForm((prev) => ({
+                              ...prev,
+                              lookingFor: tpl.lookingFor,
+                              message: tpl.message,
+                            }));
+                          }}
+                          className="px-3.5 py-1.5 rounded-xl border border-white/5 bg-white/[0.01] hover:border-blue-500/40 hover:bg-blue-500/5 hover:text-white text-zinc-400 text-xs font-bold transition-all duration-300 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
+                        >
+                          {tpl.label}
+                        </button>
+                      ))}
+                    </div>
+
                     <textarea
                       id="form-message"
                       required
@@ -310,7 +354,7 @@ const Contact = () => {
                 <button
                   type="submit"
                   disabled={isSubmitting}
-                  className="w-full py-5 bg-blue-600 hover:bg-blue-700 disabled:bg-blue-600/40 disabled:cursor-not-allowed text-white font-black uppercase text-sm sm:text-base tracking-widest transition-all text-center flex items-center justify-center gap-1.5 cursor-pointer border-t border-white/5 active:scale-[0.99] focus-visible:bg-blue-700 focus-visible:outline-none"
+                  className="w-full py-5 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 disabled:from-blue-600/40 disabled:to-indigo-600/40 disabled:cursor-not-allowed text-white font-black uppercase text-sm sm:text-base tracking-widest transition-all text-center flex items-center justify-center gap-1.5 cursor-pointer border-t border-white/5 active:scale-[0.99] focus-visible:from-blue-700 focus-visible:to-indigo-700 focus-visible:outline-none"
                 >
                   {isSubmitting ? "DISPATCHING MSG..." : "SEND MESSAGE →"}
                 </button>
