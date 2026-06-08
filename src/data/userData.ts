@@ -34,11 +34,11 @@ export const personalInfo = {
 export const fetchData = [
   { label: "User", value: "akhil@command-deck" },
   { label: "OS", value: "Windows 11 Home x86_64" },
-  { label: "Host", value: "ASUS ROG Strix G15" },
+  { label: "Host", value: "Acer Predator Helios Neo 16" },
   { label: "Kernel", value: "NT 10.0.22631" },
   { label: "Shell", value: "PowerShell 7.4" },
-  { label: "CPU", value: "AMD Ryzen 7 5800H @ 3.20GHz" },
-  { label: "GPU", value: "AMD Radeon + Nvidia RTX 3060" },
+  { label: "CPU", value: "Intel Core i7-13700HX" },
+  { label: "GPU", value: "Nvidia RTX 4050" },
   { label: "Memory", value: "16384MiB" },
   { label: "System Status", value: "ACTIVE // CALIBRATED" },
 ];

@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Bot, X, Send, Sparkles } from "lucide-react";
-import { personalInfo, skills, timeline, projectData, education } from "../data/userData";
+import { personalInfo, skills, timeline, projectData, education, resume } from "../data/userData";
 
 // Formulate system instruction to ground the model
 const SYSTEM_INSTRUCTION = `You are Akhil's AI Assistant, a friendly and highly capable chatbot integrated into Akhil Saklani's developer portfolio. 
@@ -30,6 +30,18 @@ Here is Akhil's actual portfolio data to ground your responses:
   * LinkedIn: ${personalInfo.socials.linkedin}
   * Location: ${personalInfo.fullLocation}
   * Status: ${personalInfo.status}
+
+RICH COMPONENT TRIGGER RULES (CRITICAL):
+1. Whenever the user asks about Akhil's projects or work, or you introduce/mention a project, you MUST append the project card tag at the end of your response on a new line. Format: [PROJECT: Project Name]. You can include multiple project tags if relevant (one per line). Available project names are:
+   - Personalized Portfolio
+   - BingeBuddy AI
+   - LogicMint
+   - SplitSmart
+   Example: "Here are some of Akhil's projects: BingeBuddy AI and SplitSmart. \n[PROJECT: BingeBuddy AI]\n[PROJECT: SplitSmart]"
+2. Whenever the user asks for Akhil's resume/CV, you MUST append the resume card tag on a new line: [RESUME: full-stack-developer].
+   Example: "You can download his resume here: \n[RESUME: full-stack-developer]"
+3. Whenever the user asks for contact info or socials, you MUST append the contact card tag on a new line: [CONTACT: info].
+   Example: "Here are the contact links: \n[CONTACT: info]"
 
 RULES:
 1. Ground all claims directly in this data. Do not make up achievements or internships.
@@ -77,6 +89,175 @@ const SUGGESTIONS_MAP: Record<string, string[]> = {
 
 const API_KEY = import.meta.env.VITE_GEMINI_API_KEY || "";
 const GEMINI_URL = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${API_KEY}`;
+
+const RECRUITER_PROMPTS = [
+  { label: "📄 Show Resume", query: "Show Akhil's Resume" },
+  { label: "🛠️ Tech Stack", query: "What stack does he use?" },
+  { label: "💼 Open for Work?", query: "Is he open to contract work?" },
+  { label: "🚀 Top Projects", query: "What are your top projects?" },
+  { label: "✉ Contact Info", query: "How can I contact Akhil?" },
+];
+
+const renderMessageContent = (text: string) => {
+  const regex = /\[(PROJECT|RESUME|CONTACT):\s*([^\]]+)\]/g;
+  const parts: { type: string; content?: string; value?: string }[] = [];
+  let lastIndex = 0;
+  let match;
+
+  while ((match = regex.exec(text)) !== null) {
+    const textBefore = text.substring(lastIndex, match.index);
+    if (textBefore.trim()) {
+      parts.push({ type: "text", content: textBefore });
+    }
+
+    parts.push({ type: match[1].toLowerCase(), value: match[2].trim() });
+    lastIndex = regex.lastIndex;
+  }
+
+  const textAfter = text.substring(lastIndex);
+  if (textAfter.trim() || parts.length === 0) {
+    parts.push({ type: "text", content: textAfter });
+  }
+
+  return (
+    <div className="space-y-3">
+      {parts.map((part, idx) => {
+        if (part.type === "text") {
+          return <p key={idx} className="whitespace-pre-wrap">{part.content}</p>;
+        }
+
+        if (part.type === "project" && part.value) {
+          const proj = projectData.find(p => p.name.toLowerCase() === part.value!.toLowerCase());
+          if (!proj) return null;
+
+          return (
+            <div key={idx} className="mt-2 p-3.5 rounded-2xl border border-white/10 bg-white/[0.04] backdrop-blur-md space-y-3 shadow-xl hover:border-blue-500/30 transition-all duration-300">
+              <div className="flex items-start justify-between">
+                <div>
+                  <h5 className="font-extrabold text-white text-xs tracking-tight">{proj.name}</h5>
+                  {proj.status && (
+                    <span className="inline-block px-2 py-0.5 rounded-full bg-blue-500/10 border border-blue-500/25 text-[#00C8FF] text-[8px] font-black uppercase tracking-wider mt-1">
+                      {proj.status}
+                    </span>
+                  )}
+                </div>
+                {proj.category && (
+                  <span className="text-[9px] font-black text-zinc-500 uppercase tracking-widest bg-white/5 border border-white/10 px-2 py-0.5 rounded-full">
+                    {proj.category}
+                  </span>
+                )}
+              </div>
+
+              <p className="text-zinc-400 text-[11px] sm:text-xs leading-relaxed font-medium">
+                {proj.description}
+              </p>
+
+              <div className="flex flex-wrap gap-1">
+                {proj.tech.map(t => (
+                  <span key={t} className="text-[9px] font-bold text-zinc-500 bg-white/[0.02] border border-white/5 px-1.5 py-0.5 rounded-md uppercase font-mono">
+                    {t}
+                  </span>
+                ))}
+              </div>
+
+              <div className="flex gap-2 pt-1">
+                {proj.live && (
+                  <a
+                    href={proj.live}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex-1 py-1.5 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-black text-[10px] uppercase tracking-wider text-center cursor-pointer transition-colors"
+                  >
+                    Live Demo ↗
+                  </a>
+                )}
+                {proj.github && (
+                  <a
+                    href={proj.github}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex-1 py-1.5 rounded-xl border border-white/10 bg-white/5 hover:bg-white/10 text-white font-black text-[10px] uppercase tracking-wider text-center cursor-pointer transition-colors"
+                  >
+                    GitHub Code ↗
+                  </a>
+                )}
+              </div>
+            </div>
+          );
+        }
+
+        if (part.type === "resume") {
+          return (
+            <div key={idx} className="mt-2 p-3.5 rounded-2xl border border-white/10 bg-white/[0.04] backdrop-blur-md flex items-center justify-between gap-4 shadow-xl hover:border-blue-500/30 transition-all duration-300">
+              <div className="flex items-center gap-3">
+                <div className="w-9 h-9 rounded-xl bg-red-500/10 border border-red-500/25 text-red-400 flex items-center justify-center flex-shrink-0">
+                  <svg className="w-5 h-5 fill-current" viewBox="0 0 24 24">
+                    <path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-9 14H8v-2h2v2zm0-4H8v-2h2v2zm0-4H8V7h2v2zm6 8h-4v-2h4v2zm0-4h-4v-2h4v2zm0-4h-4V7h4v2z" />
+                  </svg>
+                </div>
+                <div>
+                  <h5 className="font-extrabold text-white text-xs tracking-tight">Akhil's Resume</h5>
+                  <p className="text-[10px] text-zinc-500 font-bold uppercase tracking-wider mt-0.5">PDF · Full Stack Developer</p>
+                </div>
+              </div>
+              <a
+                href={resume["full-stack-developer"]}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="px-3 py-1.5 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-black text-[10px] uppercase tracking-wider cursor-pointer transition-colors flex-shrink-0"
+              >
+                View PDF ↗
+              </a>
+            </div>
+          );
+        }
+
+        if (part.type === "contact") {
+          return (
+            <div key={idx} className="mt-2 p-3.5 rounded-2xl border border-white/10 bg-white/[0.04] backdrop-blur-md space-y-3 shadow-xl hover:border-blue-500/30 transition-all duration-300">
+              <h5 className="font-extrabold text-white text-xs tracking-tight">Contact Information</h5>
+              <div className="space-y-2">
+                <a
+                  href={`mailto:${personalInfo.socials.email}`}
+                  className="flex items-center gap-3 text-zinc-400 hover:text-white transition-colors"
+                >
+                  <div className="w-7 h-7 rounded-lg bg-red-500/10 border border-red-500/20 text-red-400 flex items-center justify-center flex-shrink-0 text-xs">
+                    ✉
+                  </div>
+                  <span className="text-xs font-mono">{personalInfo.socials.email}</span>
+                </a>
+                <a
+                  href={personalInfo.socials.linkedin}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex items-center gap-3 text-zinc-400 hover:text-white transition-colors"
+                >
+                  <div className="w-7 h-7 rounded-lg bg-blue-500/10 border border-blue-500/20 text-blue-400 flex items-center justify-center flex-shrink-0 text-xs font-bold font-mono">
+                    in
+                  </div>
+                  <span className="text-xs font-mono">LinkedIn Profile ↗</span>
+                </a>
+                <a
+                  href={personalInfo.socials.github}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex items-center gap-3 text-zinc-400 hover:text-white transition-colors"
+                >
+                  <div className="w-7 h-7 rounded-lg bg-white/10 border border-white/20 text-white flex items-center justify-center flex-shrink-0 text-xs font-bold font-mono">
+                    git
+                  </div>
+                  <span className="text-xs font-mono">GitHub Profile ↗</span>
+                </a>
+              </div>
+            </div>
+          );
+        }
+
+        return null;
+      })}
+    </div>
+  );
+};
 
 type Props = {
   activeTab?: string;
@@ -229,6 +410,10 @@ const AiAssistant = ({ activeTab, isOpen, setIsOpen }: Props) => {
   };
 
   const suggestions = SUGGESTIONS_MAP[currentSection] || SUGGESTIONS_MAP.home;
+  const combinedSuggestions = [
+    ...RECRUITER_PROMPTS.map(p => ({ label: p.label, query: p.query, isPremium: true })),
+    ...suggestions.map(s => ({ label: s, query: s, isPremium: false }))
+  ];
 
   const clearChat = () => {
     if (window.confirm("Are you sure you want to clear chat history?")) {
@@ -360,11 +545,11 @@ const AiAssistant = ({ activeTab, isOpen, setIsOpen }: Props) => {
                     <div
                       className={`max-w-[78%] px-4 py-2.5 rounded-2xl text-sm leading-relaxed ${
                         isModel
-                          ? "bg-white/[0.03] border border-white/5 text-zinc-300 rounded-tl-sm whitespace-pre-wrap"
+                          ? "bg-white/[0.03] border border-white/5 text-zinc-300 rounded-tl-sm"
                           : "bg-blue-600 text-white rounded-tr-sm"
                       }`}
                     >
-                      {msg.parts[0].text}
+                      {isModel ? renderMessageContent(msg.parts[0].text) : msg.parts[0].text}
                     </div>
                   </div>
                 );
@@ -388,14 +573,18 @@ const AiAssistant = ({ activeTab, isOpen, setIsOpen }: Props) => {
 
             {/* Quick Suggestions (Only show when not loading) */}
             {!isLoading && (
-              <div className="p-3 bg-white/[0.01] border-t border-white/5 flex flex-wrap gap-1.5 justify-start flex-shrink-0">
-                {suggestions.map((sug) => (
+              <div className="p-3 bg-white/[0.01] border-t border-white/5 flex items-center gap-1.5 overflow-x-auto no-scrollbar shrink-0">
+                {combinedSuggestions.map((sug, idx) => (
                   <button
-                    key={sug}
-                    onClick={() => handleSendMessage(sug)}
-                    className="text-[10px] font-black uppercase tracking-wider px-3 py-1.5 rounded-full border border-white/5 bg-white/5 hover:border-blue-500/30 hover:bg-blue-500/10 hover:text-blue-400 text-zinc-400 transition-all cursor-pointer"
+                    key={idx}
+                    onClick={() => handleSendMessage(sug.query)}
+                    className={`flex-shrink-0 text-[10px] font-black uppercase tracking-wider px-3.5 py-2 rounded-full border transition-all cursor-pointer whitespace-nowrap active:scale-95 ${
+                      sug.isPremium
+                        ? "border-blue-500/20 bg-blue-600/[0.08] hover:border-blue-500/40 hover:bg-blue-600/15 text-blue-400"
+                        : "border-white/5 bg-white/5 hover:border-white/10 hover:bg-white/10 text-zinc-400"
+                    }`}
                   >
-                    {sug}
+                    {sug.label}
                   </button>
                 ))}
               </div>
