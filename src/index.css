@@ -345,5 +345,11 @@ html.light .footer-container .border-white\/5 {
 }
 
 
-
-
+.active-category-tab {
+  color: #050505 !important;
+  border-color: transparent !important;
+}
+html.light .active-category-tab {
+  color: #fbfbfc !important;
+  border-color: transparent !important;
+}

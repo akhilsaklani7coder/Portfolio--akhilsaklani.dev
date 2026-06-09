@@ -144,7 +144,7 @@ export const projectData = [
     name: "Personalized Portfolio",
     description: "A personal portfolio website showcasing projects, skills, and developer identity. Features a fully functional custom terminal deck, real-time command suggestions, and a smooth fluid visual theme.",
     tech: ["React", "TypeScript", "Tailwind CSS", "Framer Motion", "Vite"],
-    live: "https://akhilsaklani-dev.vercel.app/",
+    live: "https://akhilsaklani.is-a.dev/",
     github: "https://github.com/akhilsaklani7coder/Portfolio--akhilsaklani.dev",
     category: "Web",
   },

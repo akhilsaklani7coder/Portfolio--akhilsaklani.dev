@@ -161,7 +161,7 @@ const Footer = ({ uiType, onTabChange }: Props) => {
             &nbsp;&nbsp;name: <span className="text-emerald-400">"Akhil Saklani"</span>,{"\n"}
             &nbsp;&nbsp;role: <span className="text-emerald-400">"Full Stack Dev | AI"</span>,{"\n"}
             &nbsp;&nbsp;stack: [<span className="text-emerald-400">"React"</span>, <span className="text-emerald-400">"Javascript"</span>, <span className="text-emerald-400">"Python"</span>, <span className="text-emerald-400">"AI"</span>],{"\n"}
-            &nbsp;&nbsp;status: <span className="text-emerald-400">"Available ✓"</span>{"\n"}
+            &nbsp;&nbsp;status: <span className="text-emerald-400">"Available ✓"</span>,{"\n"}
             &nbsp;&nbsp;caffeine: <span className="text-emerald-400">"Infinity"</span>{"\n"}
             &#125;;
           </pre>

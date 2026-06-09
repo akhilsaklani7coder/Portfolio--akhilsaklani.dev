@@ -53,11 +53,11 @@ const Projects = ({ limit }: { limit?: number }) => {
         </div>
 
         {/* Category Filter */}
-        <div className="flex flex-wrap justify-center gap-2 mb-4">
+        <div className="flex flex-wrap justify-center gap-2 mb-8 relative z-20">
           <button
             onClick={() => setActiveCategory("all")}
             className={clsx(
-              "px-4 py-2 rounded-full text-sm font-black transition-all duration-300 uppercase tracking-widest border",
+              "px-6 py-2.5 rounded-full text-xs sm:text-sm font-black transition-all duration-300 uppercase tracking-widest border",
               activeCategory === "all"
                 ? "bg-white text-black border-white"
                 : "text-zinc-500 border-white/10 hover:border-white/30 hover:text-white"
@@ -70,7 +70,7 @@ const Projects = ({ limit }: { limit?: number }) => {
               key={cat}
               onClick={() => setActiveCategory(cat)}
               className={clsx(
-                "px-6 py-2 rounded-full text-sm font-black transition-all duration-300 uppercase tracking-widest border",
+                "px-6 py-2.5 rounded-full text-xs sm:text-sm font-black transition-all duration-300 uppercase tracking-widest border",
                 activeCategory === cat
                   ? "bg-white text-black border-white"
                   : "text-zinc-500 border-white/10 hover:border-white/30 hover:text-white"

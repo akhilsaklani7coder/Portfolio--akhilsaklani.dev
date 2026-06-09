@@ -16,7 +16,7 @@ type Props = {
   setIsAiOpen: (v: boolean) => void;
 };
 
-const Navbar = ({ terminalMode, setTerminalMode, theme = "dark", setTheme, isAiOpen, setIsAiOpen }: Props) => {
+const Navbar = ({ terminalMode, setTerminalMode, uiType = "landing", setUiType, theme = "dark", setTheme, isAiOpen, setIsAiOpen }: Props) => {
   const isLight = theme === "light";
   const [scrolled, setScrolled] = useState(false);
   const [scrollProgress, setScrollProgress] = useState(0);
@@ -144,6 +144,8 @@ const Navbar = ({ terminalMode, setTerminalMode, theme = "dark", setTheme, isAiO
                 )}
               </button>
             )}
+
+
 
             {/* 2. Resume Button */}
             {!terminalMode && (

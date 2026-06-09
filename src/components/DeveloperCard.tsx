@@ -16,6 +16,27 @@ const codeLines = [
 
 const DeveloperCard = () => {
   const [cursorVisible, setCursorVisible] = useState(true);
+  const [rotateX, setRotateX] = useState(0);
+  const [rotateY, setRotateY] = useState(0);
+
+  const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
+    const card = e.currentTarget;
+    const box = card.getBoundingClientRect();
+    const x = e.clientX - box.left - box.width / 2;
+    const y = e.clientY - box.top - box.height / 2;
+    
+    // Max rotation 10 degrees
+    const rX = -(y / (box.height / 2)) * 10;
+    const rY = (x / (box.width / 2)) * 10;
+    
+    setRotateX(rX);
+    setRotateY(rY);
+  };
+
+  const handleMouseLeave = () => {
+    setRotateX(0);
+    setRotateY(0);
+  };
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -45,8 +66,17 @@ const DeveloperCard = () => {
         <motion.div
           animate={{ y: [0, -6, 0] }}
           transition={{ duration: 5, repeat: Infinity, ease: "easeInOut" }}
-          className="relative w-full h-full rounded-[2rem] border border-white/10 bg-[#0d1117]/90 backdrop-blur-2xl shadow-2xl group-hover:shadow-[0_0_50px_rgba(59,130,246,0.08)] group-hover:border-white/15 transition-all duration-700 overflow-hidden flex flex-col justify-between"
+          style={{ perspective: 1000 }}
+          className="w-full h-full"
         >
+          <motion.div
+            onMouseMove={handleMouseMove}
+            onMouseLeave={handleMouseLeave}
+            animate={{ rotateX, rotateY }}
+            transition={{ type: "spring", stiffness: 400, damping: 30 }}
+            style={{ transformStyle: "preserve-3d" }}
+            className="relative w-full h-full rounded-[2rem] border border-white/10 bg-[#0d1117]/90 backdrop-blur-2xl shadow-2xl group-hover:shadow-[0_0_50px_rgba(59,130,246,0.08)] group-hover:border-white/15 transition-all duration-700 overflow-hidden flex flex-col justify-between"
+          >
           {/* Title Bar */}
           <div className="flex items-center justify-between px-4 py-2 sm:px-5 sm:py-3 border-b border-white/[0.06] bg-white/[0.02]">
             <div className="flex items-center gap-2">
@@ -117,6 +147,7 @@ const DeveloperCard = () => {
               <span className="text-[9px] sm:text-[10px] text-zinc-500 font-medium">Spaces: 2</span>
             </div>
           </div>
+          </motion.div>
         </motion.div>
       </motion.div>
     </div>
