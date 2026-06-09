@@ -8,15 +8,13 @@ import { AnimatePresence, motion } from "framer-motion";
 type Props = {
   terminalMode: boolean;
   setTerminalMode: (v: boolean) => void;
-  uiType?: "landing" | "modular";
-  setUiType?: (v: "landing" | "modular") => void;
   theme?: string;
   setTheme?: (v: string) => void;
   isAiOpen: boolean;
   setIsAiOpen: (v: boolean) => void;
 };
 
-const Navbar = ({ terminalMode, setTerminalMode, uiType = "landing", setUiType, theme = "dark", setTheme, isAiOpen, setIsAiOpen }: Props) => {
+const Navbar = ({ terminalMode, setTerminalMode, theme = "dark", setTheme, isAiOpen, setIsAiOpen }: Props) => {
   const isLight = theme === "light";
   const [scrolled, setScrolled] = useState(false);
   const [scrollProgress, setScrollProgress] = useState(0);

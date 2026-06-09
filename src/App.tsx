@@ -78,8 +78,6 @@ const App = () => {
       <Navbar
         terminalMode={terminalMode}
         setTerminalMode={handleTerminalToggle}
-        uiType={uiType}
-        setUiType={handleUiToggle}
         theme={theme}
         setTheme={setTheme}
         isAiOpen={isAiOpen}
