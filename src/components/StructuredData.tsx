@@ -3,17 +3,23 @@ import { useEffect } from "react";
 /**
  * StructuredData component
  * 
- * Injects JSON-LD structured data into the document <head> for
+ * Manages JSON-LD structured data in the document <head> for
  * search engine rich results and knowledge graph eligibility.
  * 
+ * The primary JSON-LD is embedded statically in index.html so it
+ * is present on page load (before React hydrates). This component
+ * ensures the data stays current during SPA navigation and HMR.
+ * 
  * Implements:
- * - Schema.org Person (primary entity)
+ * - Schema.org Person  (primary entity)
  * - Schema.org WebSite (site-level search eligibility)
+ * - Schema.org Organization (personal brand)
  * 
  * References:
  * - https://developers.google.com/search/docs/appearance/structured-data
  * - https://schema.org/Person
  * - https://schema.org/WebSite
+ * - https://schema.org/Organization
  */
 
 const SITE_URL = "https://akhilsaklani.is-a.dev";
@@ -25,7 +31,7 @@ const personSchema = {
   name: "Akhil Saklani",
   jobTitle: "Full Stack Developer",
   description:
-    "Computer Science undergraduate and aspiring Software Engineer passionate about Full Stack Development and Artificial Intelligence.",
+    "Full Stack Developer and AI Enthusiast building scalable web applications, AI-powered products, and modern software solutions.",
   url: SITE_URL,
   image: `${SITE_URL}/og-image.png`,
   email: "mailto:akhilsaklani4@gmail.com",
@@ -70,15 +76,39 @@ const websiteSchema = {
   url: SITE_URL,
   name: "Akhil Saklani | Portfolio",
   description:
-    "Portfolio of Akhil Saklani — Full Stack Developer & AI Enthusiast building impactful software solutions.",
+    "Portfolio of Akhil Saklani — Full Stack Developer & AI Enthusiast building scalable web applications, AI-powered products, and modern software solutions.",
   publisher: {
     "@id": `${SITE_URL}/#person`,
   },
   inLanguage: "en-US",
 };
 
+const organizationSchema = {
+  "@context": "https://schema.org",
+  "@type": "Organization",
+  "@id": `${SITE_URL}/#organization`,
+  name: "Akhil Saklani",
+  url: SITE_URL,
+  logo: `${SITE_URL}/og-image.png`,
+  description:
+    "Personal brand of Akhil Saklani — Full Stack Developer and AI Enthusiast.",
+  founder: {
+    "@id": `${SITE_URL}/#person`,
+  },
+  sameAs: [
+    "https://github.com/akhilsaklani7coder",
+    "https://www.linkedin.com/in/iamakhilsaklani/",
+  ],
+};
+
+const SCHEMA_IDS = [
+  "structured-data-person",
+  "structured-data-website",
+  "structured-data-organization",
+] as const;
+
 function injectJsonLd(id: string, data: object) {
-  // Remove existing script if present (for HMR / re-renders)
+  // Remove existing script if present (static from index.html or from a prior render)
   const existing = document.getElementById(id);
   if (existing) existing.remove();
 
@@ -93,10 +123,10 @@ const StructuredData = () => {
   useEffect(() => {
     injectJsonLd("structured-data-person", personSchema);
     injectJsonLd("structured-data-website", websiteSchema);
+    injectJsonLd("structured-data-organization", organizationSchema);
 
     return () => {
-      document.getElementById("structured-data-person")?.remove();
-      document.getElementById("structured-data-website")?.remove();
+      SCHEMA_IDS.forEach((id) => document.getElementById(id)?.remove());
     };
   }, []);
 

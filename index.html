@@ -66,6 +66,87 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;700&family=Outfit:wght@400;600;800;900&display=swap" rel="stylesheet">
+
+    <!-- ============================================= -->
+    <!-- STRUCTURED DATA (JSON-LD)                     -->
+    <!-- ============================================= -->
+    <script id="structured-data-person" type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "Person",
+      "@id": "https://akhilsaklani.is-a.dev/#person",
+      "name": "Akhil Saklani",
+      "jobTitle": "Full Stack Developer",
+      "description": "Full Stack Developer and AI Enthusiast building scalable web applications, AI-powered products, and modern software solutions.",
+      "url": "https://akhilsaklani.is-a.dev",
+      "image": "https://akhilsaklani.is-a.dev/og-image.png",
+      "email": "mailto:akhilsaklani4@gmail.com",
+      "sameAs": [
+        "https://github.com/akhilsaklani7coder",
+        "https://www.linkedin.com/in/iamakhilsaklani/",
+        "https://x.com/XSaklani",
+        "https://www.instagram.com/akhil.saklani.7/?hl=en"
+      ],
+      "alumniOf": {
+        "@type": "CollegeOrUniversity",
+        "name": "Graphic Era Hill University",
+        "address": {
+          "@type": "PostalAddress",
+          "addressLocality": "Dehradun",
+          "addressRegion": "Uttarakhand",
+          "addressCountry": "IN"
+        }
+      },
+      "knowsAbout": [
+        "Full Stack Development",
+        "Artificial Intelligence",
+        "React",
+        "Next.js",
+        "Node.js",
+        "TypeScript",
+        "JavaScript",
+        "Python",
+        "MongoDB",
+        "Software Engineering"
+      ],
+      "nationality": {
+        "@type": "Country",
+        "name": "India"
+      }
+    }
+    </script>
+    <script id="structured-data-website" type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "WebSite",
+      "@id": "https://akhilsaklani.is-a.dev/#website",
+      "url": "https://akhilsaklani.is-a.dev",
+      "name": "Akhil Saklani | Portfolio",
+      "description": "Portfolio of Akhil Saklani — Full Stack Developer & AI Enthusiast building scalable web applications, AI-powered products, and modern software solutions.",
+      "publisher": {
+        "@id": "https://akhilsaklani.is-a.dev/#person"
+      },
+      "inLanguage": "en-US"
+    }
+    </script>
+    <script id="structured-data-organization" type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "Organization",
+      "@id": "https://akhilsaklani.is-a.dev/#organization",
+      "name": "Akhil Saklani",
+      "url": "https://akhilsaklani.is-a.dev",
+      "logo": "https://akhilsaklani.is-a.dev/og-image.png",
+      "description": "Personal brand of Akhil Saklani — Full Stack Developer and AI Enthusiast.",
+      "founder": {
+        "@id": "https://akhilsaklani.is-a.dev/#person"
+      },
+      "sameAs": [
+        "https://github.com/akhilsaklani7coder",
+        "https://www.linkedin.com/in/iamakhilsaklani/"
+      ]
+    }
+    </script>
   </head>
   <body>
     <div id="root"></div>
