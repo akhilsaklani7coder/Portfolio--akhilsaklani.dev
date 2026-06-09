@@ -148,7 +148,7 @@ const Navbar = ({ terminalMode, setTerminalMode, theme = "dark", setTheme, isAiO
             {/* 2. Resume Button */}
             {!terminalMode && (
               <a
-                href="https://drive.google.com/file/d/17JCGXhkabSrHT3FGyEkwBVneEPjC-u6T/view"
+                href="https://drive.google.com/file/d/1EX0vAq8HHs4ahqoR-xy3_Ofb7FCiQg11/view"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="flex items-center justify-center gap-0.5 sm:gap-1 px-3 py-[7px] sm:px-5 sm:py-2 rounded-xl bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white font-bold transition-all duration-300 hover:shadow-[0_4px_20px_rgba(59,130,246,0.35)] hover:-translate-y-[1px] active:scale-[0.97] active:translate-y-0 text-[11px] sm:text-[13px] tracking-wide cursor-pointer border border-blue-400/20 hover:border-blue-400/30 group"

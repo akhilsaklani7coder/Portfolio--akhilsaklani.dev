@@ -97,7 +97,7 @@ const Footer = ({ uiType, onTabChange }: Props) => {
               Skills
             </a>
             <a
-              href="https://drive.google.com/file/d/17JCGXhkabSrHT3FGyEkwBVneEPjC-u6T/view"
+              href="https://drive.google.com/file/d/1EX0vAq8HHs4ahqoR-xy3_Ofb7FCiQg11/view"
               target="_blank"
               rel="noopener noreferrer"
               className="block text-zinc-400 hover:text-white text-sm sm:text-base py-0.5 transition-all duration-300 hover:translate-x-1"

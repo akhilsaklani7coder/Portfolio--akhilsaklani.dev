@@ -173,7 +173,7 @@ export const projectData = [
 
 
 export const resume = {
-  "full-stack-developer": "https://drive.google.com/file/d/17JCGXhkabSrHT3FGyEkwBVneEPjC-u6T/view",
+  "full-stack-developer": "https://drive.google.com/file/d/1EX0vAq8HHs4ahqoR-xy3_Ofb7FCiQg11/view",
 };
 
 export const education = [
