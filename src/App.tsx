@@ -11,6 +11,7 @@ import Projects from "./pages/Projects";
 import Contact from "./pages/Contact";
 import Footer from "./components/Footer";
 import AiAssistant from "./components/AiAssistant";
+import StructuredData from "./components/StructuredData";
 
 import { Routes, Route, Navigate } from "react-router-dom";
 
@@ -75,6 +76,7 @@ const App = () => {
   return (
     <div className="w-full min-h-screen bg-[#050505] text-white relative">
       <GlobalBackground />
+      <StructuredData />
       <Navbar
         terminalMode={terminalMode}
         setTerminalMode={handleTerminalToggle}
