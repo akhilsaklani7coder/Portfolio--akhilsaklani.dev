@@ -54,6 +54,7 @@ function generateRobotsTxt() {
 
 User-agent: *
 Allow: /
+Disallow: /assets/
 
 Sitemap: ${SITE_URL}/sitemap.xml
 `;

@@ -3,6 +3,7 @@
 
 User-agent: *
 Allow: /
+Disallow: /assets/
 
 # Sitemap location
 Sitemap: https://akhilsaklani.is-a.dev/sitemap.xml

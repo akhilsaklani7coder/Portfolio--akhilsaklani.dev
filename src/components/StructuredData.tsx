@@ -11,15 +11,18 @@ import { useEffect } from "react";
  * ensures the data stays current during SPA navigation and HMR.
  * 
  * Implements:
- * - Schema.org Person  (primary entity)
- * - Schema.org WebSite (site-level search eligibility)
- * - Schema.org Organization (personal brand)
+ * - Schema.org Person        (primary entity)
+ * - Schema.org WebSite       (site-level search eligibility)
+ * - Schema.org Organization  (personal brand)
+ * - Schema.org ProfilePage   (profile page indicator)
+ * - Schema.org BreadcrumbList (site structure)
  * 
  * References:
  * - https://developers.google.com/search/docs/appearance/structured-data
  * - https://schema.org/Person
  * - https://schema.org/WebSite
  * - https://schema.org/Organization
+ * - https://schema.org/ProfilePage
  */
 
 const SITE_URL = "https://akhilsaklani.is-a.dev";
@@ -31,10 +34,13 @@ const personSchema = {
   name: "Akhil Saklani",
   jobTitle: "Full Stack Developer",
   description:
-    "Full Stack Developer and AI Enthusiast building scalable web applications, AI-powered products, and modern software solutions.",
+    "Full Stack Developer and AI Enthusiast focused on building scalable web applications, intelligent AI-powered solutions, and impactful digital experiences that solve real-world problems.",
   url: SITE_URL,
   image: `${SITE_URL}/og-image.png`,
   email: "mailto:akhilsaklani4@gmail.com",
+  mainEntityOfPage: {
+    "@id": `${SITE_URL}/`,
+  },
   sameAs: [
     "https://github.com/akhilsaklani7coder",
     "https://www.linkedin.com/in/iamakhilsaklani/",
@@ -74,9 +80,10 @@ const websiteSchema = {
   "@type": "WebSite",
   "@id": `${SITE_URL}/#website`,
   url: SITE_URL,
-  name: "Akhil Saklani | Portfolio",
+  name: "Akhil Saklani",
+  alternateName: "Akhil Saklani Portfolio",
   description:
-    "Portfolio of Akhil Saklani — Full Stack Developer & AI Enthusiast building scalable web applications, AI-powered products, and modern software solutions.",
+    "Akhil Saklani is a Full Stack Developer and AI Enthusiast focused on building scalable web applications, intelligent AI-powered solutions, and impactful digital experiences that solve real-world problems.",
   publisher: {
     "@id": `${SITE_URL}/#person`,
   },
@@ -89,7 +96,7 @@ const organizationSchema = {
   "@id": `${SITE_URL}/#organization`,
   name: "Akhil Saklani",
   url: SITE_URL,
-  logo: `${SITE_URL}/og-image.png`,
+  logo: `${SITE_URL}/android-chrome-512x512.png`,
   description:
     "Personal brand of Akhil Saklani — Full Stack Developer and AI Enthusiast.",
   founder: {
@@ -101,10 +108,45 @@ const organizationSchema = {
   ],
 };
 
+const profilePageSchema = {
+  "@context": "https://schema.org",
+  "@type": "ProfilePage",
+  "@id": `${SITE_URL}/#profilepage`,
+  mainEntity: {
+    "@id": `${SITE_URL}/#person`,
+  },
+  name: "Akhil Saklani — Full Stack Developer & AI Enthusiast",
+  description:
+    "Portfolio and personal brand of Akhil Saklani, a Full Stack Developer and AI Enthusiast focused on building scalable web applications and impactful digital experiences.",
+  url: SITE_URL,
+  inLanguage: "en-US",
+};
+
+const breadcrumbSchema = {
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  itemListElement: [
+    {
+      "@type": "ListItem",
+      position: 1,
+      name: "Home",
+      item: `${SITE_URL}/`,
+    },
+    {
+      "@type": "ListItem",
+      position: 2,
+      name: "Projects",
+      item: `${SITE_URL}/projects`,
+    },
+  ],
+};
+
 const SCHEMA_IDS = [
   "structured-data-person",
   "structured-data-website",
   "structured-data-organization",
+  "structured-data-profilepage",
+  "structured-data-breadcrumb",
 ] as const;
 
 function injectJsonLd(id: string, data: object) {
@@ -124,6 +166,8 @@ const StructuredData = () => {
     injectJsonLd("structured-data-person", personSchema);
     injectJsonLd("structured-data-website", websiteSchema);
     injectJsonLd("structured-data-organization", organizationSchema);
+    injectJsonLd("structured-data-profilepage", profilePageSchema);
+    injectJsonLd("structured-data-breadcrumb", breadcrumbSchema);
 
     return () => {
       SCHEMA_IDS.forEach((id) => document.getElementById(id)?.remove());
