@@ -42,7 +42,7 @@ const personSchema = {
     "@id": `${SITE_URL}/`,
   },
   sameAs: [
-    "https://github.com/akhilsaklani7coder",
+    "https://github.com/Akhildev7",
     "https://www.linkedin.com/in/iamakhilsaklani/",
     "https://x.com/XSaklani",
     "https://www.instagram.com/akhil.saklani.7/?hl=en",
@@ -103,7 +103,7 @@ const organizationSchema = {
     "@id": `${SITE_URL}/#person`,
   },
   sameAs: [
-    "https://github.com/akhilsaklani7coder",
+    "https://github.com/Akhildev7",
     "https://www.linkedin.com/in/iamakhilsaklani/",
   ],
 };
