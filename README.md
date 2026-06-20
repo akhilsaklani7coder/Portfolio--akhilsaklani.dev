@@ -60,7 +60,7 @@ Ensure you have [Node.js](https://nodejs.org/) installed (v18+ recommended) alon
 
 ### 1. Clone the Repository
 ```bash
-git clone https://github.com/Akhildev7/Portfolio--akhilsaklani.dev.git
+git clone https://github.com/akhilsaklani7coder/Portfolio--akhilsaklani.dev.git
 cd Portfolio--akhilsaklani.dev
 ```
 
@@ -96,5 +96,5 @@ Verify files locally using `npm run preview`.
 
 *   **Email**: [akhilsaklani4@gmail.com](mailto:akhilsaklani4@gmail.com)
 *   **LinkedIn**: [iamakhilsaklani](https://www.linkedin.com/in/iamakhilsaklani/)
-*   **GitHub**: [Akhildev7](https://github.com/Akhildev7)
+*   **GitHub**: [akhilsaklani7coder](https://github.com/akhilsaklani7coder)
 *   **Twitter**: [@XSaklani](https://x.com/XSaklani)

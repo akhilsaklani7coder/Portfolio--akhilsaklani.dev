@@ -22,7 +22,7 @@ const Hero = ({ onTabChange, uiType }: HeroProps) => {
     },
     {
       icon: GithubIcon,
-      href: "https://github.com/Akhildev7",
+      href: "https://github.com/akhilsaklani7coder",
       label: "GitHub",
     },
     {

@@ -23,7 +23,7 @@ export const personalInfo = {
   phone: "+91 7818876311",
   fullLocation: "Dehradun, Uttarakhand, India",
   socials: {
-    github: "https://github.com/Akhildev7",
+    github: "https://github.com/akhilsaklani7coder",
     linkedin: "https://www.linkedin.com/in/iamakhilsaklani/",
     instagram: "https://www.instagram.com/akhil.saklani.7/?hl=en",
     email: "akhilsaklani4@gmail.com",
@@ -119,8 +119,8 @@ export const contactItems = [
   {
     icon: GithubIcon,
     label: "GitHub",
-    value: "Akhildev7",
-    href: "https://github.com/Akhildev7",
+    value: "akhilsaklani7coder",
+    href: "https://github.com/akhilsaklani7coder",
     color: "text-foreground",
   },
   {
@@ -145,7 +145,7 @@ export const projectData = [
     description: "A personal portfolio website showcasing projects, skills, and developer identity. Features a fully functional custom terminal deck, real-time command suggestions, and a smooth fluid visual theme.",
     tech: ["React", "TypeScript", "Tailwind CSS", "Framer Motion", "Vite"],
     live: "https://akhilsaklani.is-a.dev/",
-    github: "https://github.com/Akhildev7/Portfolio--akhilsaklani.dev",
+    github: "https://github.com/akhilsaklani7coder/Portfolio--akhilsaklani.dev",
     category: "Web",
   },
   {
@@ -159,14 +159,14 @@ export const projectData = [
     name: "LogicMint",
     description: "An AI-powered coding interview practice and automated evaluation system. Includes a built-in code editor, real-time compiler, test case-based validation, and rule-based AI performance insights.",
     tech: ["Java", "JavaScript", "HTML", "CSS", "ProcessBuilder"],
-    github: "https://github.com/Akhildev7/LogicMint",
+    github: "https://github.com/akhilsaklani7coder/LogicMint",
     category: "Web",
   },
   {
     name: "SplitSmart",
     description: "A high-performance expense-splitting app leveraging Graph Theory (DFS) for circular debt elimination and Greedy Algorithms for cash flow minimization. Features a Knapsack-based wishlist optimizer and a Gemini-powered AI financial advisor.",
     tech: ["Python", "Flask", "SQLite", "JavaScript", "Tailwind CSS", "Gemini API"],
-    github: "https://github.com/Akhildev7/SplitSmart",
+    github: "https://github.com/akhilsaklani7coder/SplitSmart",
     category: "Web",
   },
 ];

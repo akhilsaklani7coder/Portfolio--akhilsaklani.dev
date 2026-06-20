@@ -38,7 +38,7 @@ const Skills = () => {
 
   useEffect(() => {
     // Realtime GitHub API fetch
-    fetch("https://api.github.com/users/Akhildev7")
+    fetch("https://api.github.com/users/akhilsaklani7coder")
       .then((res) => res.json())
       .then((data) => {
         if (data && data.public_repos !== undefined) {
@@ -262,7 +262,7 @@ const Skills = () => {
             {/* Card 3: GitHub Realtime */}
             <motion.div
               variants={cardVariants}
-              onClick={() => window.open("https://github.com/Akhildev7", "_blank")}
+              onClick={() => window.open("https://github.com/akhilsaklani7coder", "_blank")}
               className="p-[1px] rounded-[2rem] border border-zinc-200/70 dark:border-white/10 bg-gradient-to-br from-zinc-200/80 to-zinc-100/50 dark:from-white/10 dark:to-white/5 hover:from-blue-500/30 hover:to-indigo-500/30 transition-all duration-500 group shadow-lg hover:shadow-[0_10px_30px_rgba(59,130,246,0.12)] dark:hover:shadow-[0_10px_30px_rgba(59,130,246,0.08)] hover:-translate-y-1.5 flex flex-col cursor-pointer"
             >
               <div className="bg-white/90 dark:bg-[#0b0c10]/95 rounded-[31px] p-5 md:p-8 flex-grow flex flex-col justify-between backdrop-blur-xl relative overflow-hidden min-h-[180px] md:min-h-[220px]">
